@@ -32,17 +32,31 @@
     }
 
     html {
-      scroll-behavior: smooth;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
       font-family: "Noto Sans JP", sans-serif;
-      overflow-x: hidden;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       cursor: none;
+    }
+
+    #app-container {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
     }
 
     a,
@@ -1145,6 +1159,69 @@
     #copy-tap:hover {
       color: var(--accent);
     }
+
+    /* ─── Mobile Layout Fixes (Emergency Patch) ─── */
+    @media(max-width: 768px) {
+      /* 1. 横スクロールの完全無効化 */
+      html, body, #app-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+      }
+      
+      /* 2. すべての要素のはみ出し防止 */
+      * {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      
+      /* 背景の装飾・フル画面要素などは制限から絶対除外 */
+      .orb, #crt, .scanline, #pcv, #bg-slider, .bg-slide, .hero-bg-slider, .hero-bg-slider::after {
+        max-width: none !important;
+      }
+
+      /* 3. タイトルやテキストの途切れ修正と中央揃え */
+      .top-title {
+        font-size: clamp(1.8rem, 10vw, 2.8rem) !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        text-align: center !important;
+        width: 100%;
+      }
+      
+      .hero-main, .hero-sub {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        text-align: center !important;
+      }
+
+      .hero-inner {
+        text-align: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      /* 4. 動画プレースホルダー枠のはみ出し完全修正 */
+      .hero-video {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex;
+        justify-content: center;
+        margin: 0 auto;
+      }
+      
+      .yt-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      
+      /* コンテナ幅の安全確保 */
+      .container {
+        width: 100%;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+    }
   </style>
 </head>
 
@@ -1168,6 +1245,7 @@
     <div class="log" id="blog"></div>
   </div>
 
+  <div id="app-container">
   <!-- HERO -->
   <section id="hero">
     <!-- Hero Background Slider -->
@@ -1502,6 +1580,7 @@
       </div>
     </div>
   </footer>
+  </div>
 
   <!-- 隠し特商法ページ -->
   <div id="hidden-legal" style="display:none;position:fixed;inset:0;z-index:99990;background:#000;overflow-y:auto;">
@@ -1560,13 +1639,38 @@
   </div>
 
   <script>
+    // ── Zoom Prevention (Pinch & Double Tap) ──
+    document.addEventListener('touchmove', function(e) {
+      if (e.touches && e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // ── Smooth Scroll for #app-container ──
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function (e) {
+          var targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          var targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            e.preventDefault();
+            document.getElementById('app-container').scrollTo({
+              top: targetEl.offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    });
+
     // ── Cursor ──
     (function () {
       var c = document.getElementById('cur'), r = document.getElementById('cur-ring');
       var mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
       document.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; c.style.transform = 'translate(' + (mx - 3) + 'px,' + (my - 3) + 'px)'; });
       (function anim() { rx += (mx - rx) * .18; ry += (my - ry) * .18; r.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)'; requestAnimationFrame(anim); })();
-      document.querySelectorAll('a,button,.btn,.uc-card,.ben-card,.act-card,.opt-card,.gal-img').forEach(function (el) {
+      document.querySelectorAll('a,button,.btn,.uc-card,.ben-card,.act-card,.opt-card').forEach(function (el) {
         el.addEventListener('mouseenter', function () { document.body.classList.add('hov'); });
         el.addEventListener('mouseleave', function () { document.body.classList.remove('hov'); });
       });
