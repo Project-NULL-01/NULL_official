@@ -7,7 +7,7 @@
 <meta name="description" content="インフルエンサー・個人事業主・店舗向け次世代Web構築パッケージ。AIコンシェルジュ「NULL」が24時間あなたのビジネスを拡張します。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0D0D12;
@@ -92,18 +92,25 @@ section{position:relative;z-index:10;padding:100px 0;}
 /* ─── HERO ─── */
 #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:160px 0 80px;overflow:hidden;}
 .hero-bg-slider{position:absolute;inset:0;z-index:0;}
-.bg-slide{position:absolute;inset:0;background-size:contain;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity 2s ease-in-out;}
-.bg-slide.active{opacity:0.25;}
-.top-header{position:absolute;top:0;left:0;width:100%;padding:40px 24px;text-align:center;z-index:20;pointer-events:none;}
-.top-title{font-family:"Rajdhani",sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);font-weight:700;letter-spacing:.15em;color:#fff;text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow),_0_0_55px_var(--accent-glow);margin:0;}
-.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
-@media(max-width:768px){.hero-inner{grid-template-columns:1fr;}.hero-video{order:2;}}
+.hero-bg-slider::after{content:'';position:absolute;inset:0;background:rgba(13,13,18,0.65);z-index:1;}
+.bg-slide{position:absolute;inset:0;background-size:cover;background-position:top center;background-repeat:no-repeat;opacity:0;transition:opacity 2s ease-in-out;}
+.bg-slide.active{opacity:1;}
+.top-title{font-family:"Orbitron",sans-serif;font-size:clamp(2.8rem,7vw,6rem);font-weight:900;letter-spacing:.08em;color:#fff;text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow),0 0 65px var(--accent-glow);margin:0;line-height:1;padding-bottom:10px;animation:glitch-text 4s infinite;}
+@keyframes glitch-text {
+  0%{transform:translate(0);text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow);}
+  2%{transform:translate(2px, -2px);text-shadow:3px 0 var(--accent),-3px 0 var(--purple);}
+  4%{transform:translate(-2px, 2px);text-shadow:-3px 0 var(--accent),3px 0 var(--purple);}
+  6%{transform:translate(0);text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow);}
+  100%{transform:translate(0);text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow);}
+}
+.hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;gap:50px;align-items:center;text-align:center;max-width:900px;margin:0 auto;}
+@media(max-width:768px){.hero-inner{gap:40px;}}
 .hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid rgba(0,255,204,.3);border-radius:50px;font-size:.75rem;letter-spacing:.15em;color:rgba(0,255,204,.7);margin-bottom:24px;}
 .hero-tag::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);}
-.hero-main{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;line-height:1.25;margin-bottom:20px;}
+.hero-main{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;line-height:1.4;margin-bottom:20px;}
 .hero-main .hl{color:var(--accent);text-shadow:0 0 20px var(--accent-glow);}
 .hero-sub{font-size:clamp(.85rem,2vw,1rem);color:var(--text-dim);margin-bottom:36px;line-height:1.8;}
-.hero-cta{display:flex;gap:16px;flex-wrap:wrap;}
+.hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
 
 /* ─── YouTube Embed ─── */
 .yt-wrapper{position:relative;padding:2px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent));background-size:300% 300%;animation:holoBorder 5s ease infinite;z-index:5;}
@@ -148,7 +155,7 @@ section{position:relative;z-index:10;padding:100px 0;}
 .ben-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--purple));}
 .ben-content{flex:1;}
 .ben-img-wrapper{flex:1;display:flex;justify-content:center;align-items:center;}
-.ben-img-wrapper img{max-width:100%;height:auto;border-radius:12px;box-shadow:0 10px 40px rgba(0,255,204,0.1), 0 0 20px rgba(176,38,255,0.1);border:1px solid var(--glass-border);}
+.ben-img-wrapper img{max-width:100%;height:auto;min-height:200px;background:rgba(0,255,204,0.02);border-radius:12px;box-shadow:0 10px 40px rgba(0,255,204,0.1), 0 0 20px rgba(176,38,255,0.1);border:1px solid var(--glass-border);}
 .ben-num{font-family:"Rajdhani",sans-serif;font-size:3rem;font-weight:700;color:rgba(0,255,204,.12);line-height:1;margin-bottom:8px;}
 .ben-title{font-weight:700;font-size:1.05rem;color:var(--accent);margin-bottom:12px;}
 .ben-body{font-size:.88rem;color:var(--text-dim);line-height:1.8;}
@@ -191,17 +198,6 @@ section{position:relative;z-index:10;padding:100px 0;}
 .opt-desc{font-size:.8rem;color:var(--text-dim);line-height:1.7;}
 .price-cta{text-align:center;padding:40px 0 0;}
 
-/* ─── Gallery ─── */
-.gallery-carousel{position:relative;width:100%;height:500px;border-radius:16px;overflow:hidden;margin-top:40px;background:#000;border:1px solid var(--glass-border);box-shadow:0 10px 40px rgba(0,255,204,0.1), 0 0 20px rgba(176,38,255,0.1);}
-@media(max-width:768px){.gallery-carousel{height:350px;}}
-.gal-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.8s ease-in-out;display:flex;align-items:center;justify-content:center;}
-.gal-slide.active{opacity:1;}
-.gal-img{width:100%;height:100%;object-fit:contain;}
-.gal-controls{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:10;}
-.gal-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .3s;}
-.gal-dot:hover{background:rgba(0,255,204,.5);}
-.gal-dot.active{background:var(--accent);box-shadow:0 0 10px var(--accent);}
-
 /* ─── Activities ─── */
 .act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:40px;}
 @media(max-width:768px){.act-grid{grid-template-columns:1fr;}}
@@ -219,11 +215,9 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
 @media(max-width:640px){.footer-inner{grid-template-columns:1fr;}}
 .footer-logo{font-family:"Rajdhani",sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:.2em;color:var(--accent);text-shadow:0 0 15px var(--accent-glow);margin-bottom:10px;}
 .footer-tagline{font-size:.85rem;color:var(--text-dim);margin-bottom:20px;}
-.footer-sns{display:flex;gap:10px;flex-wrap:wrap;}
-.sns-btn{padding:8px 18px;border:1px solid rgba(255,255,255,.15);border-radius:50px;font-size:.78rem;color:var(--text-dim);transition:all .3s;}
-.sns-btn:hover{border-color:var(--accent);color:var(--accent);}
-.sns-line{border-color:rgba(0,195,0,.4);color:#00c300;}
-.sns-line:hover{background:#00c300;color:#fff;border-color:#00c300;}
+.footer-sns{display:flex;gap:16px;flex-wrap:wrap;}
+.sns-img{width:54px;height:54px;object-fit:cover;border-radius:12px;transition:all .3s;opacity:0.8;filter:drop-shadow(0 0 5px rgba(255,255,255,0.1));border:1px solid rgba(255,255,255,0.1);}
+.sns-img:hover{transform:scale(1.15) translateY(-3px);opacity:1;filter:drop-shadow(0 0 15px var(--accent));border-color:var(--accent);}
 .footer-links{display:flex;gap:40px;}
 .footer-col{display:flex;flex-direction:column;gap:10px;}
 .footer-col-title{font-family:"Rajdhani",sans-serif;font-size:.75rem;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;}
@@ -262,16 +256,13 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
     <div class="bg-slide" style="background-image:url('assets/null_window_rain.jpg')"></div>
   </div>
 
-  <header class="top-header">
-    <h1 class="top-title">Project_NULL</h1>
-  </header>
-
   <div class="orb orb-teal" style="width:600px;height:600px;top:-200px;left:-200px;z-index:1;"></div>
   <div class="orb orb-purple" style="width:400px;height:400px;top:100px;right:-100px;z-index:1;"></div>
   
   <div class="container">
     <div class="hero-inner">
       <div class="hero-text fade-in">
+        <h1 class="top-title" style="margin-bottom:16px;">Project_NULL</h1>
         <div class="hero-tag">B2B PACKAGE / AI CONCIERGE</div>
         <h2 class="hero-main">
           24時間、あなたの世界を<br>拡張する。<br>
@@ -283,7 +274,7 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
           <a href="https://lin.ee/xHa9eyq" target="_blank" class="btn btn-purple" id="hero-line-btn">LINEで相談する</a>
         </div>
       </div>
-      <div class="hero-video fade-in" style="transition-delay:.2s">
+      <div class="hero-video fade-in" style="transition-delay:.2s;width:100%;max-width:800px;">
         <div class="yt-wrapper">
           <div class="yt-inner" id="yt-box">
             <div class="yt-boot" id="yt-boot" onclick="loadYT()">
@@ -366,7 +357,7 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
           </ul>
         </div>
         <div class="ben-img-wrapper">
-          <img src="assets/diagram_1.png" alt="AIコンシェルジュの仕組み">
+          <img src="assets/diagram_1.png" alt="仕組み">
         </div>
       </div>
       <div class="ben-card fade-in" style="transition-delay:.1s">
@@ -381,12 +372,12 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
             </div>
             <div class="cmp-box cmp-good">
               <div class="cmp-label">AI NULL / 月</div>
-              <div class="cmp-val">定額〜</div>
+              <div class="cmp-val" style="font-size:1.2rem;">¥10,000 / 月<br><span style="font-size:0.8rem">（月1万）</span></div>
             </div>
           </div>
         </div>
         <div class="ben-img-wrapper">
-          <img src="assets/diagram_2.png" alt="圧倒的コストパフォーマンス">
+          <img src="assets/diagram_2.png" alt="コスト比較">
         </div>
       </div>
       <div class="ben-card fade-in" style="transition-delay:.2s">
@@ -408,7 +399,7 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
           </ul>
         </div>
         <div class="ben-img-wrapper">
-          <img src="assets/diagram_3.png" alt="多言語・マルチ対応機能一覧">
+          <img src="assets/diagram_3.png" alt="機能一覧">
         </div>
       </div>
       <div class="ben-card fade-in" style="transition-delay:.3s">
@@ -423,7 +414,7 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
           </div>
         </div>
         <div class="ben-img-wrapper">
-          <img src="assets/diagram_4.png" alt="導入までの超カンタン3ステップ">
+          <img src="assets/diagram_4.png" alt="導入ステップ">
         </div>
       </div>
     </div>
@@ -454,7 +445,7 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
         </div>
         <div class="glass opt-card fade-in" style="transition-delay:.05s">
           <div class="opt-badge opt-b">OPT B</div>
-          <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">AIアバター作成 <span style="color:var(--text-dim);font-size:.9rem;font-weight:400;">要相談</span></div>
+          <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">AIアバター作成 <span style="color:var(--purple);font-size:1.15rem;">+¥30,000〜</span></div>
           <div class="opt-desc">オーナー独自のAIアバターを生成。あなたの顔・世界観を反映したバーチャルキャラクターを制作。</div>
         </div>
         <div class="glass opt-card fade-in" style="transition-delay:.10s">
@@ -478,24 +469,6 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
 
 <div class="divider"></div>
 
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="orb orb-purple" style="width:400px;height:400px;top:0;left:0;"></div>
-  <div class="container">
-    <div class="sec-label fade-in">GALLERY</div>
-    <h2 class="sec-title fade-in">NULL Visuals</h2>
-    <div class="gallery-carousel fade-in" id="gal-carousel">
-      <div class="gal-slide active"><img src="assets/profile_top.jpg" alt="NULL Visual" class="gal-img"></div>
-      <div class="gal-slide"><img src="assets/extra_01.jpg" alt="NULL Visual" class="gal-img" loading="lazy"></div>
-      <div class="gal-slide"><img src="assets/extra_03.jpg" alt="NULL Visual" class="gal-img" loading="lazy"></div>
-      <div class="gal-slide"><img src="assets/extra_04.jpg" alt="NULL Visual" class="gal-img" loading="lazy"></div>
-      <div class="gal-slide"><img src="assets/null_maid_full.jpg" alt="NULL Visual" class="gal-img" loading="lazy"></div>
-      <div class="gal-controls" id="gal-controls"></div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
 
 <!-- ACTIVITIES -->
 <section id="activities">
@@ -546,9 +519,21 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
         <div class="footer-logo glitch-h">PROJECT NULL</div>
         <p class="footer-tagline">バーチャル世界をハッキングする、AIコンシェルジュ。</p>
         <div class="footer-sns">
-          <a href="https://www.tiktok.com/@project.null.01" target="_blank" class="sns-btn" id="f-tiktok" title="TikTok">TikTok</a>
-          <a href="https://www.instagram.com/project.null.01" target="_blank" class="sns-btn" id="f-insta" title="Instagram">Instagram</a>
-          <a href="https://lin.ee/xHa9eyq" target="_blank" class="sns-btn sns-line" id="f-line" title="LINE">LINE</a>
+          <a href="https://lin.ee/xHa9eyq" target="_blank" title="LINE">
+            <img src="assets/line.jpg" alt="LINE" class="sns-img">
+          </a>
+          <a href="https://www.instagram.com/project.null.01" target="_blank" title="Instagram">
+            <img src="assets/instagram.jpg" alt="Instagram" class="sns-img">
+          </a>
+          <a href="https://www.tiktok.com/@project.null.01" target="_blank" title="TikTok">
+            <img src="assets/tiktok.jpg" alt="TikTok" class="sns-img">
+          </a>
+          <a href="https://www.threads.net/@project.null.01" target="_blank" title="Threads">
+            <img src="assets/threads.jpg" alt="Threads" class="sns-img">
+          </a>
+          <a href="https://www.tunecore.co.jp/artists?id=1070484" target="_blank" title="Music">
+            <img src="assets/music.jpg" alt="Music" class="sns-img">
+          </a>
         </div>
       </div>
       <div class="footer-links">
@@ -565,13 +550,13 @@ footer{padding:60px 0 0;position:relative;z-index:10;}
       </div>
     </div>
     <div class="footer-bottom">
-      <span id="copy-tap" title="5回タップで隠しページへ">© PROJECT NULL</span>
+      <span id="copy-tap">© PROJECT NULL</span>
       <span style="color:var(--text-dim);font-size:.8rem;">All rights reserved.</span>
     </div>
   </div>
 </footer>
 
-<!-- 隠し特商法ページ（5回タップで出現） -->
+<!-- 隠し特商法ページ -->
 <div id="hidden-legal" style="display:none;position:fixed;inset:0;z-index:99990;background:#000;overflow-y:auto;">
   <div style="max-width:700px;margin:0 auto;padding:60px 24px;font-family:monospace;">
     <div style="font-size:.8rem;color:#ff003c;letter-spacing:.2em;margin-bottom:8px;">// CLASSIFIED — UNAUTHORIZED ACCESS DETECTED</div>
@@ -678,68 +663,17 @@ function loadYT(){
   }, 4000);
 })();
 
-// ── Gallery Carousel & SE ──
-(function(){
-  var slides = document.querySelectorAll('#gal-carousel .gal-slide');
-  if(!slides.length) return;
-  var controls = document.getElementById('gal-controls');
-  var cur = 0;
-  
-  // Web Audio API によるサイバーパンク風効果音の生成
-  var audioCtx = null;
-  function playCyberBeep() {
-    try {
-      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if(audioCtx.state === 'suspended') audioCtx.resume();
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.05, audioCtx.currentTime); // 音量を抑えめに設定
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.1);
-    } catch(e) {}
-  }
 
-  slides.forEach(function(_, i){
-    var dot = document.createElement('div');
-    dot.className = 'gal-dot' + (i===0?' active':'');
-    dot.addEventListener('click', function(){
-      switchSlide(i);
-    });
-    controls.appendChild(dot);
-  });
-  
-  var dots = document.querySelectorAll('.gal-dot');
-  function switchSlide(idx) {
-    if(idx === cur) return;
-    slides[cur].classList.remove('active');
-    dots[cur].classList.remove('active');
-    cur = idx;
-    slides[cur].classList.add('active');
-    dots[cur].classList.add('active');
-    playCyberBeep();
-  }
-  
-  // 自動スライド
-  setInterval(function(){
-    switchSlide((cur + 1) % slides.length);
-  }, 5000);
-})();
 
-// ── Hidden Legal (5x tap) ──
+// ── Hidden Legal (10x tap) ──
 (function(){
   var el=document.getElementById('copy-tap'),count=0,timer;
   function reset(){count=0;}
   el.addEventListener('click',function(){
     count++;
     clearTimeout(timer);
-    timer=setTimeout(reset,2000);
-    if(count>=5){
+    timer=setTimeout(reset,1500);
+    if(count>=10){
       count=0;
       var hl=document.getElementById('hidden-legal');
       hl.style.display='block';
