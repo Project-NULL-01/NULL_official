@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特定商取引法に基づく表記 — PROJECT NULL</title>
+<meta name="description" content="PROJECT NULLの特定商取引法に基づく表記ページです。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D0D12;
+  --accent: #00FFCC;
+  --purple: #B026FF;
+  --accent-glow: rgba(0,255,204,0.45);
+  --purple-glow: rgba(176,38,255,0.45);
+  --accent-soft: rgba(0,255,204,0.12);
+  --text: #f0f0f0;
+  --text-dim: #888;
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Noto Sans JP",sans-serif;
+  overflow-x:hidden;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{text-decoration:none;}
+::selection{background:var(--accent);color:#000;}
+
+/* ─── CRT effect ─── */
+#crt{position:fixed;inset:0;z-index:9000;pointer-events:none;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.08) 50%);background-size:100% 4px;opacity:.15;}
+.scanline{position:fixed;inset:0;z-index:8999;pointer-events:none;background:linear-gradient(0deg,transparent,rgba(0,255,204,.04) 50%,transparent);background-size:100% 200px;animation:scanAnim 10s linear infinite;}
+@keyframes scanAnim{0%{transform:translateY(-100%);}100%{transform:translateY(100%);}}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:rgba(0,255,204,.25);border-radius:2px;}
+
+/* ─── Layout ─── */
+.container{max-width:800px;margin:0 auto;padding:0 24px;}
+.page-wrap{padding:80px 0 100px;position:relative;z-index:10;}
+
+/* ─── Header ─── */
+.page-header{padding:32px 0 48px;border-bottom:1px solid rgba(0,255,204,.12);margin-bottom:48px;}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-family:"Rajdhani",sans-serif;font-size:.85rem;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:24px;transition:color .3s;}
+.back-link:hover{color:#fff;}
+.back-link::before{content:'←';}
+.page-label{font-family:"Rajdhani",sans-serif;font-size:11px;letter-spacing:.4em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
+.page-title{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;line-height:1.25;}
+.page-subtitle{font-family:"Rajdhani",sans-serif;font-size:.85rem;letter-spacing:.15em;color:var(--text-dim);margin-top:8px;}
+
+/* ─── Orbs ─── */
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;}
+.orb-teal{background:var(--accent);opacity:.04;}
+.orb-purple{background:var(--purple);opacity:.05;}
+
+/* ─── Table ─── */
+.legal-table-wrap{
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  overflow:hidden;
+  margin-bottom:40px;
+}
+.legal-table{width:100%;border-collapse:collapse;font-size:.9rem;}
+.legal-table thead tr{
+  background:rgba(0,255,204,.06);
+  border-bottom:1px solid rgba(0,255,204,.15);
+}
+.legal-table thead th{
+  padding:14px 20px;
+  text-align:left;
+  font-family:"Rajdhani",sans-serif;
+  font-size:.75rem;
+  letter-spacing:.3em;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+.legal-table tbody tr{border-bottom:1px solid rgba(255,255,255,.05);}
+.legal-table tbody tr:last-child{border-bottom:none;}
+.legal-table tbody tr:hover{background:rgba(255,255,255,.02);}
+.legal-td-label{
+  padding:18px 20px;
+  color:var(--text-dim);
+  font-size:.85rem;
+  font-weight:400;
+  width:35%;
+  vertical-align:top;
+  border-right:1px solid rgba(255,255,255,.05);
+}
+.legal-td-value{
+  padding:18px 20px;
+  color:var(--text);
+  font-size:.9rem;
+  vertical-align:top;
+  line-height:1.8;
+}
+.legal-td-value .note{
+  display:block;
+  margin-top:6px;
+  font-size:.78rem;
+  color:var(--text-dim);
+}
+.legal-td-value .accent{color:var(--accent);font-weight:700;}
+
+/* ─── Info box ─── */
+.info-box{
+  border:1px solid rgba(0,255,204,.2);
+  border-radius:10px;
+  padding:20px 24px;
+  font-size:.85rem;
+  color:var(--text-dim);
+  line-height:1.9;
+  margin-bottom:40px;
+}
+.info-box strong{color:var(--text);}
+
+/* ─── Footer bar ─── */
+.page-footer{margin-top:60px;padding-top:32px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-logo{font-family:"Rajdhani",sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:.2em;color:var(--accent);text-shadow:0 0 10px var(--accent-glow);}
+.footer-copy{font-size:.8rem;color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<!-- CRT Effects -->
+<div id="crt"></div>
+<div class="scanline"></div>
+
+<!-- Orbs -->
+<div class="orb orb-teal" style="width:500px;height:500px;top:-150px;left:-150px;"></div>
+<div class="orb orb-purple" style="width:400px;height:400px;bottom:-100px;right:-100px;"></div>
+
+<!-- Main content -->
+<div class="page-wrap">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="page-header">
+      <a href="index.html" class="back-link">トップページに戻る</a>
+      <div class="page-label">Legal Information</div>
+      <h1 class="page-title">特定商取引法に基づく表記</h1>
+      <div class="page-subtitle">SPECIFIED COMMERCIAL TRANSACTIONS ACT</div>
+    </div>
+
+    <!-- Table -->
+    <div class="legal-table-wrap">
+      <table class="legal-table">
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="legal-td-label">販売業者</td>
+            <td class="legal-td-value"><span class="accent">PROJECT NULL</span>（個人事業）</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">運営責任者</td>
+            <td class="legal-td-value">NULL</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">所在地</td>
+            <td class="legal-td-value">JAPAN FUKUOKA</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">電話番号</td>
+            <td class="legal-td-value">
+              開示請求があり次第提供
+              <span class="note">※ お問い合わせはまずLINEにてご連絡ください。</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">メールアドレス</td>
+            <td class="legal-td-value">project.null1225@gmail.com</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">販売価格</td>
+            <td class="legal-td-value">50,000円〜</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">支払方法</td>
+            <td class="legal-td-value">
+              クレジットカード決済（Stripe）<br>
+              銀行振込
+            </td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">支払時期</td>
+            <td class="legal-td-value">契約締結後、請求書発行から指定期日以内にお支払いください。</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">サービス提供時期</td>
+            <td class="legal-td-value">契約締結後、双方合意のスケジュールに従い納品・提供いたします。</td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">返品・キャンセル</td>
+            <td class="legal-td-value">
+              役務（制作・開発）の性質上、制作開始後のキャンセルおよび返金は原則不可とします。<br>
+              詳細は契約書に準じます。
+            </td>
+          </tr>
+          <tr>
+            <td class="legal-td-label">動作環境</td>
+            <td class="legal-td-value">
+              最新バージョンのChrome / Safari / Edge / Firefox<br>
+              PC・スマートフォン対応
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Note -->
+    <div class="info-box">
+      <strong>お問い合わせ・ご相談について</strong><br>
+      ご不明な点は、LINEまたはTikTok DMにてお気軽にお問い合わせください。<br>
+      ヒアリング・見積りは<strong>無料</strong>にて承っております。
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <div class="footer-logo">PROJECT NULL</div>
+      <div class="footer-copy">© PROJECT NULL — All rights reserved.</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
