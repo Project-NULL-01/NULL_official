@@ -1,701 +1,1667 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROJECT NULL — AIコンシェルジュ × Web構築パッケージ</title>
-<meta name="description" content="インフルエンサー・個人事業主・店舗向け次世代Web構築パッケージ。AIコンシェルジュ「NULL」が24時間あなたのビジネスを拡張します。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #0D0D12;
-  --accent: #00FFCC;
-  --purple: #B026FF;
-  --accent-glow: rgba(0,255,204,0.45);
-  --purple-glow: rgba(176,38,255,0.45);
-  --accent-soft: rgba(0,255,204,0.12);
-  --text: #f0f0f0;
-  --text-dim: #888;
-  --glass: rgba(255,255,255,0.04);
-  --glass-border: rgba(255,255,255,0.10);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:"Noto Sans JP",sans-serif;
-  overflow-x:hidden;
-  line-height:1.7;
-  -webkit-font-smoothing:antialiased;
-  cursor:none;
-}
-a,button{cursor:none;text-decoration:none;}
-::selection{background:var(--accent);color:#000;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PROJECT NULL — AIコンシェルジュ × Web構築パッケージ</title>
+  <meta name="description" content="インフルエンサー・個人事業主・店舗向け次世代Web構築パッケージ。AIコンシェルジュ「NULL」が24時間あなたのビジネスを拡張します。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0D0D12;
+      --accent: #00FFCC;
+      --purple: #B026FF;
+      --accent-glow: rgba(0, 255, 204, 0.45);
+      --purple-glow: rgba(176, 38, 255, 0.45);
+      --accent-soft: rgba(0, 255, 204, 0.12);
+      --text: #f0f0f0;
+      --text-dim: #888;
+      --glass: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.10);
+    }
 
-/* ─── Cursor ─── */
-#cur{position:fixed;top:0;left:0;width:6px;height:6px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:99999;box-shadow:0 0 10px var(--accent);transition:transform .1s;}
-#cur-ring{position:fixed;top:0;left:0;width:36px;height:36px;border:1px solid var(--accent-glow);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
-body.hov #cur{transform:scale(2);background:var(--purple);}
-body.hov #cur-ring{width:50px;height:50px;border-color:var(--purple-glow);}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* ─── CRT ─── */
-#crt{position:fixed;inset:0;z-index:9000;pointer-events:none;background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.08) 50%);background-size:100% 4px;opacity:.15;}
-.scanline{position:fixed;inset:0;z-index:8999;pointer-events:none;background:linear-gradient(0deg,transparent,rgba(0,255,204,.04) 50%,transparent);background-size:100% 200px;animation:scanAnim 10s linear infinite;}
-@keyframes scanAnim{0%{transform:translateY(-100%);}100%{transform:translateY(100%);}}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* ─── Particles canvas ─── */
-#pcv{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Noto Sans JP", sans-serif;
+      overflow-x: hidden;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      cursor: none;
+    }
 
-/* ─── Scrollbar ─── */
-::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:rgba(0,255,204,.25);border-radius:2px;}
+    a,
+    button {
+      cursor: none;
+      text-decoration: none;
+    }
 
-/* ─── Bootloader ─── */
-#boot{position:fixed;inset:0;z-index:10000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .8s,visibility .8s;}
-#boot.done{opacity:0;visibility:hidden;}
-#boot .logo{font-family:"Rajdhani",sans-serif;font-size:2.4rem;font-weight:700;letter-spacing:.25em;color:#fff;text-shadow:0 0 20px var(--accent),0 0 40px var(--accent);}
-#boot .bar-bg{width:300px;height:3px;background:#1a1a1a;border-radius:2px;}
-#boot .bar-fill{height:100%;width:0%;background:var(--accent);box-shadow:0 0 12px var(--accent);border-radius:2px;transition:width .1s;}
-#boot .log{font-family:monospace;font-size:11px;color:rgba(0,255,204,.6);min-height:80px;width:300px;}
+    ::selection {
+      background: var(--accent);
+      color: #000;
+    }
 
-/* ─── Section base ─── */
-section{position:relative;z-index:10;padding:100px 0;}
-.container{max-width:1100px;margin:0 auto;padding:0 24px;}
-.sec-label{font-family:"Rajdhani",sans-serif;font-size:11px;letter-spacing:.4em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
-.sec-title{font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.2;margin-bottom:24px;}
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.2;margin:0;}
+    /* ─── Cursor ─── */
+    #cur {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      box-shadow: 0 0 10px var(--accent);
+      transition: transform .1s;
+    }
 
-/* ─── Glass card ─── */
-.glass{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:12px;}
-.glow-border{box-shadow:0 0 25px var(--accent-glow),inset 0 0 15px var(--accent-soft);}
+    #cur-ring {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent-glow);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s;
+    }
 
-/* ─── Glitch hover ─── */
-@keyframes glitch{
-  0%{clip:rect(30px,9999px,50px,0);transform:skew(.3deg);}
-  25%{clip:rect(70px,9999px,20px,0);transform:skew(.5deg);}
-  50%{clip:rect(10px,9999px,80px,0);transform:skew(.2deg);}
-  75%{clip:rect(60px,9999px,40px,0);transform:skew(.4deg);}
-  100%{clip:rect(30px,9999px,50px,0);transform:skew(.3deg);}
-}
-.glitch-h:hover{animation:glitch .3s steps(2,start) infinite;text-shadow:2px 0 var(--accent),-2px 0 var(--purple);}
+    body.hov #cur {
+      transform: scale(2);
+      background: var(--purple);
+    }
 
-/* ─── Buttons ─── */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;font-family:"Noto Sans JP",sans-serif;font-weight:700;font-size:.95rem;border-radius:4px;transition:all .3s;position:relative;overflow:hidden;}
-.btn-primary{background:transparent;border:1px solid var(--accent);color:var(--accent);box-shadow:0 0 20px var(--accent-glow);}
-.btn-primary:hover{background:var(--accent);color:#000;box-shadow:0 0 40px var(--accent);}
-.btn-purple{background:transparent;border:1px solid var(--purple);color:var(--purple);box-shadow:0 0 20px var(--purple-glow);}
-.btn-purple:hover{background:var(--purple);color:#fff;box-shadow:0 0 40px var(--purple);}
+    body.hov #cur-ring {
+      width: 50px;
+      height: 50px;
+      border-color: var(--purple-glow);
+    }
 
-/* ─── HERO ─── */
-#hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:160px 0 80px;overflow:hidden;}
-.hero-bg-slider{position:absolute;inset:0;z-index:0;}
-.hero-bg-slider::after{content:'';position:absolute;inset:0;background:rgba(13,13,18,0.65);z-index:1;}
-.bg-slide{position:absolute;inset:0;background-size:cover;background-position:top center;background-repeat:no-repeat;opacity:0;transition:opacity 2s ease-in-out;}
-.bg-slide.active{opacity:1;}
-.top-header{position:absolute;top:0;left:0;width:100%;padding:40px 24px;text-align:center;z-index:20;pointer-events:none;}
-.top-title{font-family:"Orbitron",sans-serif;font-size:clamp(2.8rem,7vw,6rem);font-weight:900;letter-spacing:.08em;color:#fff;text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow),0 0 65px var(--accent-glow);margin:0;line-height:1;margin-bottom:10px;animation:glitch-text 4s infinite;}
-@keyframes glitch-text {
-  0%{transform:translate(0);text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow);}
-  2%{transform:translate(2px, -2px);text-shadow:3px 0 var(--accent),-3px 0 var(--purple);}
-  4%{transform:translate(-2px, 2px);text-shadow:-3px 0 var(--accent),3px 0 var(--purple);}
-  6%{transform:translate(0);text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow);}
-  100%{transform:translate(0);text-shadow:0 0 15px var(--accent),0 0 35px var(--accent-glow);}
-}
-.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
-.hero-text{text-align:left;}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid rgba(0,255,204,.3);border-radius:50px;font-size:.75rem;letter-spacing:.15em;color:rgba(0,255,204,.7);margin-bottom:24px;}
-.hero-tag::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);}
-.hero-main{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;line-height:1.4;margin-bottom:20px;}
-.hero-main .hl{color:var(--accent);text-shadow:0 0 20px var(--accent-glow);}
-.hero-sub{font-size:clamp(.85rem,2vw,1rem);color:var(--text-dim);margin-bottom:36px;line-height:1.8;}
-.hero-cta{display:flex;gap:16px;flex-wrap:wrap;}
+    /* ─── CRT ─── */
+    #crt {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, .08) 50%);
+      background-size: 100% 4px;
+      opacity: .15;
+    }
 
-/* スマホ用レイアウト調整 */
-@media(max-width:768px){
-  #hero{padding:40px 0 80px;flex-direction:column;justify-content:center;}
-  .top-header{position:relative;padding:80px 20px 20px;pointer-events:auto;}
-  .top-title{font-size:clamp(2.5rem,10vw,4rem);margin-bottom:24px;}
-  .hero-inner{display:flex;flex-direction:column;gap:40px;text-align:center;}
-  .hero-text{text-align:center;}
-  .hero-cta{justify-content:center;}
-  .bg-slide{background-position:center 15%;}
-}
-/* ─── YouTube Embed ─── */
-.yt-wrapper{position:relative;padding:2px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent));background-size:300% 300%;animation:holoBorder 5s ease infinite;z-index:5;}
-@keyframes holoBorder{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-.yt-inner{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden;}
-.yt-inner iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
-.yt-boot{position:absolute;inset:0;background:radial-gradient(ellipse at center,#0d0d1a,#03030a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;cursor:pointer;z-index:5;}
-.yt-boot-btn{width:70px;height:70px;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,255,204,.06);animation:floatBtn 3s ease-in-out infinite;transition:all .4s;}
-.yt-boot-btn:hover{background:rgba(0,255,204,.15);box-shadow:0 0 40px var(--accent-glow);}
-.yt-boot-btn .play{width:0;height:0;border:14px solid transparent;border-left:22px solid var(--accent);margin-left:5px;filter:drop-shadow(0 0 8px var(--accent));}
-.yt-boot-label{font-family:"Rajdhani",sans-serif;font-size:10px;letter-spacing:.4em;color:rgba(0,255,204,.5);text-transform:uppercase;}
+    .scanline {
+      position: fixed;
+      inset: 0;
+      z-index: 8999;
+      pointer-events: none;
+      background: linear-gradient(0deg, transparent, rgba(0, 255, 204, .04) 50%, transparent);
+      background-size: 100% 200px;
+      animation: scanAnim 10s linear infinite;
+    }
 
-/* ─── ABOUT ─── */
-#about{padding:80px 0;}
-.about-card{padding:48px;border-radius:16px;}
-.about-text{font-size:1.05rem;line-height:2;color:rgba(240,240,240,.85);}
-.about-text .kw{color:var(--accent);font-weight:700;}
+    @keyframes scanAnim {
+      0% {
+        transform: translateY(-100%);
+      }
 
-/* ─── Glow orbs ─── */
-.orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none;}
-.orb-teal{background:var(--accent);opacity:.06;}
-.orb-purple{background:var(--purple);opacity:.07;}
+      100% {
+        transform: translateY(100%);
+      }
+    }
 
-/* ─── Fade in on scroll ─── */
-.fade-in{opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s;}
-.fade-in.visible{opacity:1;transform:translateY(0);}
+    /* ─── Particles canvas ─── */
+    #pcv {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-/* ─── UseCase ─── */
-#usecase .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px;}
-@media(max-width:768px){#usecase .cards{grid-template-columns:1fr;}}
-.uc-card{padding:36px 28px;border-radius:12px;transition:transform .3s,box-shadow .3s;}
-.uc-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,255,204,.15);}
-.uc-icon{font-size:2.4rem;margin-bottom:16px;}
-.uc-title{font-size:1.15rem;font-weight:700;color:var(--accent);margin-bottom:10px;}
-.uc-desc{font-size:.88rem;color:var(--text-dim);line-height:1.8;}
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar {
+      width: 3px;
+    }
 
-/* ─── Benefits ─── */
-#benefits .grid{display:flex;flex-direction:column;gap:60px;margin-top:50px;}
-.ben-card{display:flex;align-items:center;gap:40px;padding:40px;border-radius:16px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);position:relative;overflow:hidden;}
-.ben-card:nth-child(even){flex-direction:row-reverse;}
-@media(max-width:768px){.ben-card{flex-direction:column !important;gap:24px;padding:24px;}}
-.ben-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--purple));}
-.ben-content{flex:1;}
-.ben-img-wrapper{flex:1;display:flex;justify-content:center;align-items:center;}
-.ben-img-wrapper img{max-width:100%;height:auto;min-height:200px;background:rgba(0,255,204,0.02);border-radius:12px;box-shadow:0 10px 40px rgba(0,255,204,0.1), 0 0 20px rgba(176,38,255,0.1);border:1px solid var(--glass-border);}
-.ben-num{font-family:"Rajdhani",sans-serif;font-size:3rem;font-weight:700;color:rgba(0,255,204,.12);line-height:1;margin-bottom:8px;}
-.ben-title{font-weight:700;font-size:1.05rem;color:var(--accent);margin-bottom:12px;}
-.ben-body{font-size:.88rem;color:var(--text-dim);line-height:1.8;}
-.ben-list{list-style:none;margin-top:10px;}
-.ben-list li{font-size:.85rem;color:var(--text-dim);padding:4px 0;padding-left:16px;position:relative;}
-.ben-list li::before{content:'▸';position:absolute;left:0;color:var(--accent);}
-.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;}
-.cmp-box{padding:16px;border-radius:8px;text-align:center;}
-.cmp-bad{background:rgba(176,38,255,.08);border:1px solid rgba(176,38,255,.3);}
-.cmp-good{background:rgba(0,255,204,.08);border:1px solid rgba(0,255,204,.3);}
-.cmp-label{font-size:.7rem;letter-spacing:.1em;margin-bottom:8px;color:var(--text-dim);}
-.cmp-val{font-size:1.5rem;font-weight:900;}
-.cmp-bad .cmp-val{color:var(--purple);}
-.cmp-good .cmp-val{color:var(--accent);}
-.steps{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
-.step{display:flex;align-items:center;gap:14px;}
-.step-n{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;color:#000;flex-shrink:0;}
-.step-txt{font-size:.88rem;color:var(--text-dim);}
-.lang-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-.lang-tag{padding:4px 12px;border:1px solid rgba(0,255,204,.3);border-radius:50px;font-size:.75rem;color:rgba(0,255,204,.8);}
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 204, .25);
+      border-radius: 2px;
+    }
 
-/* ─── Pricing ─── */
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px;}
-@media(max-width:768px){.price-grid{grid-template-columns:1fr;}}
-.price-base{padding:40px;border-radius:16px;border:1px solid rgba(0,255,204,.3);box-shadow:0 0 40px rgba(0,255,204,.08);}
-.price-badge{display:inline-block;padding:4px 14px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#000;font-weight:900;font-size:.8rem;border-radius:50px;letter-spacing:.1em;margin-bottom:16px;}
-.price-title{font-size:1.4rem;font-weight:900;color:var(--accent);margin-bottom:12px;}
-.price-desc{font-size:.9rem;color:var(--text-dim);line-height:1.8;margin-bottom:16px;}
-.price-tags{display:flex;flex-wrap:wrap;gap:8px;}
-.ptag{padding:4px 12px;border:1px solid rgba(0,255,204,.25);border-radius:50px;font-size:.75rem;color:rgba(0,255,204,.7);}
-.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-@media(max-width:480px){.opts-grid{grid-template-columns:1fr;}}
-.opt-card{padding:24px;border-radius:10px;}
-.opt-badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:700;letter-spacing:.1em;margin-bottom:10px;}
-.opt-a{background:rgba(0,255,204,.15);color:var(--accent);border:1px solid rgba(0,255,204,.4);}
-.opt-b{background:rgba(176,38,255,.15);color:var(--purple);border:1px solid rgba(176,38,255,.4);}
-.opt-c{background:rgba(0,255,204,.1);color:var(--accent);border:1px solid rgba(0,255,204,.3);}
-.opt-d{background:rgba(176,38,255,.1);color:var(--purple);border:1px solid rgba(176,38,255,.3);}
-.opt-title{font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--text);}
-.opt-desc{font-size:.8rem;color:var(--text-dim);line-height:1.7;}
-.price-cta{text-align:center;padding:40px 0 0;}
+    /* ─── Bootloader ─── */
+    #boot {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity .8s, visibility .8s;
+    }
 
-/* ─── Activities ─── */
-.act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:40px;}
-@media(max-width:768px){.act-grid{grid-template-columns:1fr;}}
-.act-card{padding:32px;border-radius:12px;color:var(--text);transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;gap:6px;}
-.act-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,255,204,.15);}
-.act-icon{font-size:2rem;}
-.act-platform{font-family:"Rajdhani",sans-serif;font-size:.85rem;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;}
-.act-title{font-weight:700;font-size:1.05rem;}
-.act-desc{font-size:.85rem;color:var(--text-dim);line-height:1.7;flex:1;}
-.act-arrow{color:var(--accent);font-size:1.2rem;margin-top:8px;}
+    #boot.done {
+      opacity: 0;
+      visibility: hidden;
+    }
 
-/* ─── Footer ─── */
-footer{padding:60px 0 0;position:relative;z-index:10;}
-.footer-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding-bottom:40px;}
-@media(max-width:640px){.footer-inner{grid-template-columns:1fr;}}
-.footer-logo{font-family:"Rajdhani",sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:.2em;color:var(--accent);text-shadow:0 0 15px var(--accent-glow);margin-bottom:10px;}
-.footer-tagline{font-size:.85rem;color:var(--text-dim);margin-bottom:20px;}
-.footer-sns{display:flex;gap:16px;flex-wrap:wrap;}
-.sns-img{width:54px;height:54px;object-fit:cover;border-radius:12px;transition:all .3s;opacity:0.8;filter:drop-shadow(0 0 5px rgba(255,255,255,0.1));border:1px solid rgba(255,255,255,0.1);}
-.sns-img:hover{transform:scale(1.15) translateY(-3px);opacity:1;filter:drop-shadow(0 0 15px var(--accent));border-color:var(--accent);}
-.footer-links{display:flex;gap:40px;}
-.footer-col{display:flex;flex-direction:column;gap:10px;}
-.footer-col-title{font-family:"Rajdhani",sans-serif;font-size:.75rem;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;}
-.footer-link{font-size:.85rem;color:var(--text-dim);transition:color .3s;}
-.footer-link:hover{color:var(--accent);}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:24px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-#copy-tap{font-family:"Rajdhani",sans-serif;font-size:.85rem;color:var(--text-dim);letter-spacing:.1em;cursor:pointer;user-select:none;}
-#copy-tap:hover{color:var(--accent);}
-</style>
+    #boot .logo {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: .25em;
+      color: #fff;
+      text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent);
+    }
+
+    #boot .bar-bg {
+      width: 300px;
+      height: 3px;
+      background: #1a1a1a;
+      border-radius: 2px;
+    }
+
+    #boot .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      border-radius: 2px;
+      transition: width .1s;
+    }
+
+    #boot .log {
+      font-family: monospace;
+      font-size: 11px;
+      color: rgba(0, 255, 204, .6);
+      min-height: 80px;
+      width: 300px;
+    }
+
+    /* ─── Section base ─── */
+    section {
+      position: relative;
+      z-index: 10;
+      padding: 100px 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .sec-label {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 11px;
+      letter-spacing: .4em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .sec-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .2;
+      margin: 0;
+    }
+
+    /* ─── Glass card ─── */
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+    }
+
+    .glow-border {
+      box-shadow: 0 0 25px var(--accent-glow), inset 0 0 15px var(--accent-soft);
+    }
+
+    /* ─── Glitch hover ─── */
+    @keyframes glitch {
+      0% {
+        clip: rect(30px, 9999px, 50px, 0);
+        transform: skew(.3deg);
+      }
+
+      25% {
+        clip: rect(70px, 9999px, 20px, 0);
+        transform: skew(.5deg);
+      }
+
+      50% {
+        clip: rect(10px, 9999px, 80px, 0);
+        transform: skew(.2deg);
+      }
+
+      75% {
+        clip: rect(60px, 9999px, 40px, 0);
+        transform: skew(.4deg);
+      }
+
+      100% {
+        clip: rect(30px, 9999px, 50px, 0);
+        transform: skew(.3deg);
+      }
+    }
+
+    .glitch-h:hover {
+      animation: glitch .3s steps(2, start) infinite;
+      text-shadow: 2px 0 var(--accent), -2px 0 var(--purple);
+    }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      border-radius: 4px;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 40px var(--accent);
+    }
+
+    .btn-purple {
+      background: transparent;
+      border: 1px solid var(--purple);
+      color: var(--purple);
+      box-shadow: 0 0 20px var(--purple-glow);
+    }
+
+    .btn-purple:hover {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 40px var(--purple);
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 160px 0 80px;
+      overflow: hidden;
+    }
+
+    .hero-bg-slider {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg-slider::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(13, 13, 18, 0.65);
+      z-index: 1;
+    }
+
+    .bg-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: top center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .bg-slide.active {
+      opacity: 1;
+    }
+
+    .top-title {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: #fff;
+      text-shadow: 0 0 15px var(--accent), 0 0 35px var(--accent-glow), 0 0 65px var(--accent-glow);
+      margin: 0;
+      line-height: 1;
+      padding-bottom: 10px;
+      animation: glitch-text 4s infinite;
+    }
+
+    @keyframes glitch-text {
+      0% {
+        transform: translate(0);
+        text-shadow: 0 0 15px var(--accent), 0 0 35px var(--accent-glow);
+      }
+
+      2% {
+        transform: translate(2px, -2px);
+        text-shadow: 3px 0 var(--accent), -3px 0 var(--purple);
+      }
+
+      4% {
+        transform: translate(-2px, 2px);
+        text-shadow: -3px 0 var(--accent), 3px 0 var(--purple);
+      }
+
+      6% {
+        transform: translate(0);
+        text-shadow: 0 0 15px var(--accent), 0 0 35px var(--accent-glow);
+      }
+
+      100% {
+        transform: translate(0);
+        text-shadow: 0 0 15px var(--accent), 0 0 35px var(--accent-glow);
+      }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+      align-items: center;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media(max-width:768px) {
+      .hero-inner {
+        gap: 40px;
+      }
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid rgba(0, 255, 204, .3);
+      border-radius: 50px;
+      font-size: .75rem;
+      letter-spacing: .15em;
+      color: rgba(0, 255, 204, .7);
+      margin-bottom: 24px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .hero-main {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .hero-main .hl {
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .hero-sub {
+      font-size: clamp(.85rem, 2vw, 1rem);
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      line-height: 1.8;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ─── YouTube Embed ─── */
+    .yt-wrapper {
+      position: relative;
+      padding: 2px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--purple), var(--accent));
+      background-size: 300% 300%;
+      animation: holoBorder 5s ease infinite;
+      z-index: 5;
+    }
+
+    @keyframes holoBorder {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .yt-inner {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .yt-inner iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .yt-boot {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #0d0d1a, #03030a);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .yt-boot-btn {
+      width: 70px;
+      height: 70px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 255, 204, .06);
+      animation: floatBtn 3s ease-in-out infinite;
+      transition: all .4s;
+    }
+
+    .yt-boot-btn:hover {
+      background: rgba(0, 255, 204, .15);
+      box-shadow: 0 0 40px var(--accent-glow);
+    }
+
+    .yt-boot-btn .play {
+      width: 0;
+      height: 0;
+      border: 14px solid transparent;
+      border-left: 22px solid var(--accent);
+      margin-left: 5px;
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    .yt-boot-label {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 10px;
+      letter-spacing: .4em;
+      color: rgba(0, 255, 204, .5);
+      text-transform: uppercase;
+    }
+
+    /* ─── ABOUT ─── */
+    #about {
+      padding: 80px 0;
+    }
+
+    .about-card {
+      padding: 48px;
+      border-radius: 16px;
+    }
+
+    .about-text {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: rgba(240, 240, 240, .85);
+    }
+
+    .about-text .kw {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ─── Glow orbs ─── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+    }
+
+    .orb-teal {
+      background: var(--accent);
+      opacity: .06;
+    }
+
+    .orb-purple {
+      background: var(--purple);
+      opacity: .07;
+    }
+
+    /* ─── Fade in on scroll ─── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .7s, transform .7s;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── UseCase ─── */
+    #usecase .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    @media(max-width:768px) {
+      #usecase .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .uc-card {
+      padding: 36px 28px;
+      border-radius: 12px;
+      transition: transform .3s, box-shadow .3s;
+    }
+
+    .uc-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0, 255, 204, .15);
+    }
+
+    .uc-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+    }
+
+    .uc-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .uc-desc {
+      font-size: .88rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    /* ─── Benefits ─── */
+    #benefits .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      margin-top: 50px;
+    }
+
+    .ben-card {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      padding: 40px;
+      border-radius: 16px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ben-card:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    @media(max-width:768px) {
+      .ben-card {
+        flex-direction: column !important;
+        gap: 24px;
+        padding: 24px;
+      }
+    }
+
+    .ben-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+    }
+
+    .ben-content {
+      flex: 1;
+    }
+
+    .ben-img-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .ben-img-wrapper img {
+      max-width: 100%;
+      height: auto;
+      min-height: 200px;
+      background: rgba(0, 255, 204, 0.02);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 255, 204, 0.1), 0 0 20px rgba(176, 38, 255, 0.1);
+      border: 1px solid var(--glass-border);
+    }
+
+    .ben-num {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: rgba(0, 255, 204, .12);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .ben-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .ben-body {
+      font-size: .88rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    .ben-list {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+    .ben-list li {
+      font-size: .85rem;
+      color: var(--text-dim);
+      padding: 4px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .ben-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .cmp-box {
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .cmp-bad {
+      background: rgba(176, 38, 255, .08);
+      border: 1px solid rgba(176, 38, 255, .3);
+    }
+
+    .cmp-good {
+      background: rgba(0, 255, 204, .08);
+      border: 1px solid rgba(0, 255, 204, .3);
+    }
+
+    .cmp-label {
+      font-size: .7rem;
+      letter-spacing: .1em;
+      margin-bottom: 8px;
+      color: var(--text-dim);
+    }
+
+    .cmp-val {
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .cmp-bad .cmp-val {
+      color: var(--purple);
+    }
+
+    .cmp-good .cmp-val {
+      color: var(--accent);
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .step-n {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: .85rem;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .step-txt {
+      font-size: .88rem;
+      color: var(--text-dim);
+    }
+
+    .lang-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .lang-tag {
+      padding: 4px 12px;
+      border: 1px solid rgba(0, 255, 204, .3);
+      border-radius: 50px;
+      font-size: .75rem;
+      color: rgba(0, 255, 204, .8);
+    }
+
+    /* ─── Pricing ─── */
+    .price-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    @media(max-width:768px) {
+      .price-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .price-base {
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 255, 204, .3);
+      box-shadow: 0 0 40px rgba(0, 255, 204, .08);
+    }
+
+    .price-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      color: #000;
+      font-weight: 900;
+      font-size: .8rem;
+      border-radius: 50px;
+      letter-spacing: .1em;
+      margin-bottom: 16px;
+    }
+
+    .price-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .price-desc {
+      font-size: .9rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .price-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ptag {
+      padding: 4px 12px;
+      border: 1px solid rgba(0, 255, 204, .25);
+      border-radius: 50px;
+      font-size: .75rem;
+      color: rgba(0, 255, 204, .7);
+    }
+
+    .opts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media(max-width:480px) {
+      .opts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .opt-card {
+      padding: 24px;
+      border-radius: 10px;
+    }
+
+    .opt-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      margin-bottom: 10px;
+    }
+
+    .opt-a {
+      background: rgba(0, 255, 204, .15);
+      color: var(--accent);
+      border: 1px solid rgba(0, 255, 204, .4);
+    }
+
+    .opt-b {
+      background: rgba(176, 38, 255, .15);
+      color: var(--purple);
+      border: 1px solid rgba(176, 38, 255, .4);
+    }
+
+    .opt-c {
+      background: rgba(0, 255, 204, .1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 255, 204, .3);
+    }
+
+    .opt-d {
+      background: rgba(176, 38, 255, .1);
+      color: var(--purple);
+      border: 1px solid rgba(176, 38, 255, .3);
+    }
+
+    .opt-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .opt-desc {
+      font-size: .8rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .price-cta {
+      text-align: center;
+      padding: 40px 0 0;
+    }
+
+    /* ─── Activities ─── */
+    .act-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    @media(max-width:768px) {
+      .act-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .act-card {
+      padding: 32px;
+      border-radius: 12px;
+      color: var(--text);
+      transition: transform .3s, box-shadow .3s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .act-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0, 255, 204, .15);
+    }
+
+    .act-icon {
+      font-size: 2rem;
+    }
+
+    .act-platform {
+      font-family: "Rajdhani", sans-serif;
+      font-size: .85rem;
+      letter-spacing: .25em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .act-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .act-desc {
+      font-size: .85rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .act-arrow {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-top: 8px;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      padding: 60px 0 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 40px;
+    }
+
+    @media(max-width:640px) {
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-logo {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      color: var(--accent);
+      text-shadow: 0 0 15px var(--accent-glow);
+      margin-bottom: 10px;
+    }
+
+    .footer-tagline {
+      font-size: .85rem;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .footer-sns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sns-img {
+      width: 54px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 12px;
+      transition: all .3s;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.1));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sns-img:hover {
+      transform: scale(1.15) translateY(-3px);
+      opacity: 1;
+      filter: drop-shadow(0 0 15px var(--accent));
+      border-color: var(--accent);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 40px;
+    }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col-title {
+      font-family: "Rajdhani", sans-serif;
+      font-size: .75rem;
+      letter-spacing: .3em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .footer-link {
+      font-size: .85rem;
+      color: var(--text-dim);
+      transition: color .3s;
+    }
+
+    .footer-link:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, .07);
+      padding: 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    #copy-tap {
+      font-family: "Rajdhani", sans-serif;
+      font-size: .85rem;
+      color: var(--text-dim);
+      letter-spacing: .1em;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #copy-tap:hover {
+      color: var(--accent);
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- CRT Effects -->
-<div id="crt"></div>
-<div class="scanline"></div>
-<canvas id="pcv"></canvas>
+  <!-- CRT Effects -->
+  <div id="crt"></div>
+  <div class="scanline"></div>
+  <canvas id="pcv"></canvas>
 
-<!-- Custom Cursor -->
-<div id="cur"></div>
-<div id="cur-ring"></div>
+  <!-- Custom Cursor -->
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
 
-<!-- Bootloader -->
-<div id="boot">
-  <div class="logo">PROJECT NULL</div>
-  <div class="bar-bg"><div class="bar-fill" id="bfill"></div></div>
-  <div class="log" id="blog"></div>
-</div>
-
-<!-- HERO -->
-<section id="hero">
-  <!-- Hero Background Slider -->
-  <div class="hero-bg-slider" id="bg-slider">
-    <div class="bg-slide active" style="background-image:url('assets/null_maid_full.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('assets/null_train_crowd.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('assets/null_soundmake.jpg')"></div>
-    <div class="bg-slide" style="background-image:url('assets/null_window_rain.jpg')"></div>
+  <!-- Bootloader -->
+  <div id="boot">
+    <div class="logo">PROJECT NULL</div>
+    <div class="bar-bg">
+      <div class="bar-fill" id="bfill"></div>
+    </div>
+    <div class="log" id="blog"></div>
   </div>
 
-  <div class="orb orb-teal" style="width:600px;height:600px;top:-200px;left:-200px;z-index:1;"></div>
-  <div class="orb orb-purple" style="width:400px;height:400px;top:100px;right:-100px;z-index:1;"></div>
-  
-  <header class="top-header">
-    <h1 class="top-title">Project_NULL</h1>
-  </header>
+  <!-- HERO -->
+  <section id="hero">
+    <!-- Hero Background Slider -->
+    <div class="hero-bg-slider" id="bg-slider">
+      <div class="bg-slide active" style="background-image:url('assets/null_maid_full.jpg')"></div>
+      <div class="bg-slide" style="background-image:url('assets/null_train_crowd.jpg')"></div>
+      <div class="bg-slide" style="background-image:url('assets/null_soundmake.jpg')"></div>
+      <div class="bg-slide" style="background-image:url('assets/null_window_rain.jpg')"></div>
+    </div>
 
-  <div class="container">
-    <div class="hero-inner">
-      <div class="hero-text fade-in">
-        <div class="hero-tag">B2B PACKAGE / AI CONCIERGE</div>
-        <h2 class="hero-main">
-          24時間、あなたの世界を<br>拡張する。<br>
-          <span class="hl">AIコンシェルジュ「NULL」</span>
-        </h2>
-        <p class="hero-sub">インフルエンサー、個人事業主、オシャレ店舗のための<br>次世代Web構築パッケージ</p>
-        <div class="hero-cta">
-          <a href="#pricing" class="btn btn-primary" id="hero-cta-btn">料金・オプションを見る ↓</a>
-          <a href="https://lin.ee/xHa9eyq" target="_blank" class="btn btn-purple" id="hero-line-btn">LINEで相談する</a>
+    <div class="orb orb-teal" style="width:600px;height:600px;top:-200px;left:-200px;z-index:1;"></div>
+    <div class="orb orb-purple" style="width:400px;height:400px;top:100px;right:-100px;z-index:1;"></div>
+
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text fade-in">
+          <h1 class="top-title" style="margin-bottom:16px;">Project_NULL</h1>
+          <div class="hero-tag">B2B PACKAGE / AI CONCIERGE</div>
+          <h2 class="hero-main">
+            24時間、あなたの世界を<br>拡張する。<br>
+            <span class="hl">AIコンシェルジュ「NULL」</span>
+          </h2>
+          <p class="hero-sub">インフルエンサー、個人事業主、オシャレ店舗のための<br>次世代Web構築パッケージ</p>
+          <div class="hero-cta">
+            <a href="#pricing" class="btn btn-primary" id="hero-cta-btn">料金・オプションを見る ↓</a>
+            <a href="https://lin.ee/xHa9eyq" target="_blank" class="btn btn-purple" id="hero-line-btn">LINEで相談する</a>
+          </div>
         </div>
-      </div>
-      <div class="hero-video fade-in" style="transition-delay:.2s;width:100%;max-width:800px;">
-        <div class="yt-wrapper">
-          <div class="yt-inner" id="yt-box">
-            <div class="yt-boot" id="yt-boot" onclick="loadYT()">
-              <div class="yt-boot-btn"><div class="play"></div></div>
-              <div class="yt-boot-label">PLAY CM / NULL_SYSTEM_v2.0</div>
+        <div class="hero-video fade-in" style="transition-delay:.2s;width:100%;max-width:800px;">
+          <div class="yt-wrapper">
+            <div class="yt-inner" id="yt-box">
+              <div class="yt-boot" id="yt-boot" onclick="loadYT()">
+                <div class="yt-boot-btn">
+                  <div class="play"></div>
+                </div>
+                <div class="yt-boot-label">PLAY CM / NULL_SYSTEM_v2.0</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div class="divider"></div>
+  <div class="divider"></div>
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="orb orb-purple" style="width:500px;height:500px;top:50%;left:60%;transform:translate(-50%,-50%);"></div>
-  <div class="container">
-    <div class="sec-label fade-in">WHAT IS PROJECT NULL?</div>
-    <h2 class="sec-title fade-in">PROJECT NULLとは</h2>
-    <div class="glass about-card fade-in" style="transition-delay:.1s">
-      <p class="about-text">
-        店舗や個人の魅力を最大化する<span class="kw">「AIコンシェルジュシステム」</span>であり、<br>
-        同時にバーチャル世界をハッキングする<span class="kw">「サイバー・ディーヴァ」</span>。<br><br>
-        実用的なB2Bツールと、熱狂を生むエンターテイメントを融合させた、<br>唯一無二のプロジェクトです。
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="orb orb-purple" style="width:500px;height:500px;top:50%;left:60%;transform:translate(-50%,-50%);"></div>
+    <div class="container">
+      <div class="sec-label fade-in">WHAT IS PROJECT NULL?</div>
+      <h2 class="sec-title fade-in">PROJECT NULLとは</h2>
+      <div class="glass about-card fade-in" style="transition-delay:.1s">
+        <p class="about-text">
+          店舗や個人の魅力を最大化する<span class="kw">「AIコンシェルジュシステム」</span>であり、<br>
+          同時にバーチャル世界をハッキングする<span class="kw">「サイバー・ディーヴァ」</span>。<br><br>
+          実用的なB2Bツールと、熱狂を生むエンターテイメントを融合させた、<br>唯一無二のプロジェクトです。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- USE CASE -->
+  <section id="usecase">
+    <div class="orb orb-teal" style="width:400px;height:400px;bottom:-100px;right:0;"></div>
+    <div class="container">
+      <div class="sec-label fade-in">USE CASE</div>
+      <h2 class="sec-title fade-in">導入イメージ</h2>
+      <p class="fade-in" style="color:var(--text-dim);margin-bottom:8px;">あなたのビジネス・活動に合わせてカスタマイズ。3つの代表的な活用シーンをご紹介します。
       </p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- USE CASE -->
-<section id="usecase">
-  <div class="orb orb-teal" style="width:400px;height:400px;bottom:-100px;right:0;"></div>
-  <div class="container">
-    <div class="sec-label fade-in">USE CASE</div>
-    <h2 class="sec-title fade-in">導入イメージ</h2>
-    <p class="fade-in" style="color:var(--text-dim);margin-bottom:8px;">あなたのビジネス・活動に合わせてカスタマイズ。3つの代表的な活用シーンをご紹介します。</p>
-    <div class="cards">
-      <div class="glass uc-card fade-in">
-        <div class="uc-icon">🍸</div>
-        <div class="uc-title">Bar / 飲食店</div>
-        <p class="uc-desc">深夜でも予約対応・メニュー案内を自動化。「今日空いてる？」「おすすめは？」にAIが即答。オーナーの負担をゼロに。</p>
-      </div>
-      <div class="glass uc-card fade-in" style="transition-delay:.1s">
-        <div class="uc-icon">✂️</div>
-        <div class="uc-title">Salon / 美容室</div>
-        <p class="uc-desc">スムーズな多言語接客と予約システム誘導。日本語・英語・中国語対応のAIが外国人客も逃さず対応。</p>
-      </div>
-      <div class="glass uc-card fade-in" style="transition-delay:.2s">
-        <div class="uc-icon">⚡</div>
-        <div class="uc-title">インフルエンサー / 個人HP</div>
-        <p class="uc-desc">世界観を表現するポートフォリオとファン対応AI。フォロワーの質問にNULLが24時間応答。熱量を維持し続ける。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- BENEFITS -->
-<section id="benefits">
-  <div class="orb orb-purple" style="width:500px;height:500px;top:0;left:-100px;"></div>
-  <div class="container">
-    <div class="sec-label fade-in">WHY NULL?</div>
-    <h2 class="sec-title fade-in">導入のメリット</h2>
-    <div class="grid">
-      <div class="ben-card fade-in">
-        <div class="ben-content">
-          <div class="ben-num">01</div>
-          <div class="ben-title">🤖 AIコンシェルジュの仕組み</div>
-          <p class="ben-body">お客様の質問に即時対応し、予約システム・SNS・ECサイトへスムーズに誘導。</p>
-          <ul class="ben-list">
-            <li>24時間365日、無人で対応</li>
-            <li>学習済みモデルで高精度な回答</li>
-            <li>既存ツール（LINE・Googleカレンダー等）と連携</li>
-            <li>複雑な質問もNULLが自然に処理</li>
-          </ul>
+      <div class="cards">
+        <div class="glass uc-card fade-in">
+          <div class="uc-icon">🍸</div>
+          <div class="uc-title">Bar / 飲食店</div>
+          <p class="uc-desc">深夜でも予約対応・メニュー案内を自動化。「今日空いてる？」「おすすめは？」にAIが即答。オーナーの負担をゼロに。</p>
         </div>
-        <div class="ben-img-wrapper">
-          <img src="assets/diagram_1.png" alt="仕組み">
+        <div class="glass uc-card fade-in" style="transition-delay:.1s">
+          <div class="uc-icon">✂️</div>
+          <div class="uc-title">Salon / 美容室</div>
+          <p class="uc-desc">スムーズな多言語接客と予約システム誘導。日本語・英語・中国語対応のAIが外国人客も逃さず対応。</p>
+        </div>
+        <div class="glass uc-card fade-in" style="transition-delay:.2s">
+          <div class="uc-icon">⚡</div>
+          <div class="uc-title">インフルエンサー / 個人HP</div>
+          <p class="uc-desc">世界観を表現するポートフォリオとファン対応AI。フォロワーの質問にNULLが24時間応答。熱量を維持し続ける。</p>
         </div>
       </div>
-      <div class="ben-card fade-in" style="transition-delay:.1s">
-        <div class="ben-content">
-          <div class="ben-num">02</div>
-          <div class="ben-title">💹 圧倒的コストパフォーマンス</div>
-          <p class="ben-body">人間スタッフとAIの比較。導入初月から費用対効果を実感できます。</p>
-          <div class="compare">
-            <div class="cmp-box cmp-bad">
-              <div class="cmp-label">人間スタッフ / 月</div>
-              <div class="cmp-val">¥25万〜</div>
-            </div>
-            <div class="cmp-box cmp-good">
-              <div class="cmp-label">AI NULL / 月</div>
-              <div class="cmp-val" style="font-size:1.2rem;">¥10,000 / 月<br><span style="font-size:0.8rem">（月1万）</span></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- BENEFITS -->
+  <section id="benefits">
+    <div class="orb orb-purple" style="width:500px;height:500px;top:0;left:-100px;"></div>
+    <div class="container">
+      <div class="sec-label fade-in">WHY NULL?</div>
+      <h2 class="sec-title fade-in">導入のメリット</h2>
+      <div class="grid">
+        <div class="ben-card fade-in">
+          <div class="ben-content">
+            <div class="ben-num">01</div>
+            <div class="ben-title">🤖 AIコンシェルジュの仕組み</div>
+            <p class="ben-body">お客様の質問に即時対応し、予約システム・SNS・ECサイトへスムーズに誘導。</p>
+            <ul class="ben-list">
+              <li>24時間365日、無人で対応</li>
+              <li>学習済みモデルで高精度な回答</li>
+              <li>既存ツール（LINE・Googleカレンダー等）と連携</li>
+              <li>複雑な質問もNULLが自然に処理</li>
+            </ul>
+          </div>
+          <div class="ben-img-wrapper">
+            <img src="assets/diagram_1.png" alt="仕組み">
+          </div>
+        </div>
+        <div class="ben-card fade-in" style="transition-delay:.1s">
+          <div class="ben-content">
+            <div class="ben-num">02</div>
+            <div class="ben-title">💹 圧倒的コストパフォーマンス</div>
+            <p class="ben-body">人間スタッフとAIの比較。導入初月から費用対効果を実感できます。</p>
+            <div class="compare">
+              <div class="cmp-box cmp-bad">
+                <div class="cmp-label">人間スタッフ / 月</div>
+                <div class="cmp-val">¥25万〜</div>
+              </div>
+              <div class="cmp-box cmp-good">
+                <div class="cmp-label">AI NULL / 月</div>
+                <div class="cmp-val" style="font-size:1.2rem;">¥10,000 / 月<br><span
+                    style="font-size:0.8rem">（月1万）</span></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="ben-img-wrapper">
-          <img src="assets/diagram_2.png" alt="コスト比較">
-        </div>
-      </div>
-      <div class="ben-card fade-in" style="transition-delay:.2s">
-        <div class="ben-content">
-          <div class="ben-num">03</div>
-          <div class="ben-title">🌐 多言語・マルチ対応機能</div>
-          <p class="ben-body">グローバル対応で機会損失ゼロ。外国人客・海外ファンも取りこぼしなし。</p>
-          <div class="lang-tags">
-            <span class="lang-tag">🇯🇵 日本語</span>
-            <span class="lang-tag">🇺🇸 English</span>
-            <span class="lang-tag">🇨🇳 中文</span>
-            <span class="lang-tag">🇰🇷 한국어</span>
-            <span class="lang-tag">🇫🇷 Français</span>
-            <span class="lang-tag">+ More</span>
-          </div>
-          <ul class="ben-list" style="margin-top:16px">
-            <li>テキスト・音声・画像対応</li>
-            <li>LINE / Web / Instagram対応</li>
-          </ul>
-        </div>
-        <div class="ben-img-wrapper">
-          <img src="assets/diagram_3.png" alt="機能一覧">
-        </div>
-      </div>
-      <div class="ben-card fade-in" style="transition-delay:.3s">
-        <div class="ben-content">
-          <div class="ben-num">04</div>
-          <div class="ben-title">🚀 超カンタン3ステップ導入</div>
-          <p class="ben-body">面倒な設定は不要。最短1週間でAIコンシェルジュが稼働します。</p>
-          <div class="steps">
-            <div class="step"><div class="step-n">1</div><div class="step-txt">ヒアリングシートに記入（30分）</div></div>
-            <div class="step"><div class="step-n">2</div><div class="step-txt">NULLがデザイン・AI構築を担当</div></div>
-            <div class="step"><div class="step-n">3</div><div class="step-txt">公開・テスト → 稼働開始 🎉</div></div>
+          <div class="ben-img-wrapper">
+            <img src="assets/diagram_2.png" alt="コスト比較">
           </div>
         </div>
-        <div class="ben-img-wrapper">
-          <img src="assets/diagram_4.png" alt="導入ステップ">
+        <div class="ben-card fade-in" style="transition-delay:.2s">
+          <div class="ben-content">
+            <div class="ben-num">03</div>
+            <div class="ben-title">🌐 多言語・マルチ対応機能</div>
+            <p class="ben-body">グローバル対応で機会損失ゼロ。外国人客・海外ファンも取りこぼしなし。</p>
+            <div class="lang-tags">
+              <span class="lang-tag">🇯🇵 日本語</span>
+              <span class="lang-tag">🇺🇸 English</span>
+              <span class="lang-tag">🇨🇳 中文</span>
+              <span class="lang-tag">🇰🇷 한국어</span>
+              <span class="lang-tag">🇫🇷 Français</span>
+              <span class="lang-tag">+ More</span>
+            </div>
+            <ul class="ben-list" style="margin-top:16px">
+              <li>テキスト・音声・画像対応</li>
+              <li>LINE / Web / Instagram対応</li>
+            </ul>
+          </div>
+          <div class="ben-img-wrapper">
+            <img src="assets/diagram_3.png" alt="機能一覧">
+          </div>
+        </div>
+        <div class="ben-card fade-in" style="transition-delay:.3s">
+          <div class="ben-content">
+            <div class="ben-num">04</div>
+            <div class="ben-title">🚀 超カンタン3ステップ導入</div>
+            <p class="ben-body">面倒な設定は不要。最短1週間でAIコンシェルジュが稼働します。</p>
+            <div class="steps">
+              <div class="step">
+                <div class="step-n">1</div>
+                <div class="step-txt">ヒアリングシートに記入（30分）</div>
+              </div>
+              <div class="step">
+                <div class="step-n">2</div>
+                <div class="step-txt">NULLがデザイン・AI構築を担当</div>
+              </div>
+              <div class="step">
+                <div class="step-n">3</div>
+                <div class="step-txt">公開・テスト → 稼働開始 🎉</div>
+              </div>
+            </div>
+          </div>
+          <div class="ben-img-wrapper">
+            <img src="assets/diagram_4.png" alt="導入ステップ">
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div class="divider"></div>
+  <div class="divider"></div>
 
-<!-- PRICING -->
-<section id="pricing">
-  <div class="orb orb-teal" style="width:600px;height:600px;top:50%;right:-200px;transform:translateY(-50%);"></div>
-  <div class="container">
-    <div class="sec-label fade-in">PRICING</div>
-    <h2 class="sec-title fade-in">料金体系</h2>
-    <p class="fade-in" style="color:var(--text-dim);margin-bottom:40px;">ベースプランに必要なオプションを自由に組み合わせるカスタマイズ形式です。</p>
-    <div class="price-grid fade-in">
-      <div class="glass price-base">
-        <div class="price-badge">BASE</div>
-        <div class="price-title">ホームページ作成 <span style="font-size:1.8rem;color:#f0f0f0;margin-left:8px;">¥50,000</span></div>
-        <div class="price-desc">UI/UXデザイン設計・基本構築・レスポンシブ対応・SEO最適化・公開サポートまで含む基本パッケージ。</div>
-        <div class="price-tags"><span class="ptag">デザイン</span><span class="ptag">コーディング</span><span class="ptag">SEO</span><span class="ptag">公開サポート</span></div>
-      </div>
-      <div class="opts-grid">
-        <div class="glass opt-card fade-in">
-          <div class="opt-badge opt-a">OPT A</div>
-          <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">NULL導入 <span style="color:var(--accent);font-size:1.15rem;">+¥50,000</span></div>
-          <div class="opt-desc">24時間対応AIコンシェルジュの実装。LINEやWebサイトに設置。予約・FAQ・誘導を自動化。</div>
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="orb orb-teal" style="width:600px;height:600px;top:50%;right:-200px;transform:translateY(-50%);"></div>
+    <div class="container">
+      <div class="sec-label fade-in">PRICING</div>
+      <h2 class="sec-title fade-in">料金体系</h2>
+      <p class="fade-in" style="color:var(--text-dim);margin-bottom:40px;">ベースプランに必要なオプションを自由に組み合わせるカスタマイズ形式です。</p>
+      <div class="price-grid fade-in">
+        <div class="glass price-base">
+          <div class="price-badge">BASE</div>
+          <div class="price-title">ホームページ作成 <span style="font-size:1.8rem;color:#f0f0f0;margin-left:8px;">¥50,000</span>
+          </div>
+          <div class="price-desc">UI/UXデザイン設計・基本構築・レスポンシブ対応・SEO最適化・公開サポートまで含む基本パッケージ。</div>
+          <div class="price-tags"><span class="ptag">デザイン</span><span class="ptag">コーディング</span><span
+              class="ptag">SEO</span><span class="ptag">公開サポート</span></div>
         </div>
-        <div class="glass opt-card fade-in" style="transition-delay:.05s">
-          <div class="opt-badge opt-b">OPT B</div>
-          <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">AIアバター作成 <span style="color:var(--purple);font-size:1.15rem;">+¥30,000〜</span></div>
-          <div class="opt-desc">オーナー独自のAIアバターを生成。あなたの顔・世界観を反映したバーチャルキャラクターを制作。</div>
-        </div>
-        <div class="glass opt-card fade-in" style="transition-delay:.10s">
-          <div class="opt-badge opt-c">OPT C</div>
-          <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">ミニゲーム作成 <span style="color:var(--accent);font-size:1.15rem;">+¥50,000</span></div>
-          <div class="opt-desc">サイト内に配置する集客用インタラクティブゲーム。滞在時間UPとバイラル拡散を狙う最強の集客装置。</div>
-        </div>
-        <div class="glass opt-card fade-in" style="transition-delay:.15s">
-          <div class="opt-badge opt-d">OPT D</div>
-          <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">その他カスタム <span style="color:var(--text-dim);font-size:.9rem;font-weight:400;">要相談</span></div>
-          <div class="opt-desc">特殊機能・API連携・外部システム統合など、あらゆる要件に対応。まずはご相談ください。</div>
-        </div>
-      </div>
-    </div>
-    <div class="price-cta fade-in">
-      <a href="https://lin.ee/xHa9eyq" target="_blank" class="btn btn-primary" id="pricing-cta-btn" style="font-size:1.05rem;padding:18px 48px;">導入の相談をする（LINE）→</a>
-      <p style="color:var(--text-dim);font-size:.8rem;margin-top:12px;">※ 料金はヒアリング後にお見積りします。まずはお気軽にご相談ください。</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-
-<!-- ACTIVITIES -->
-<section id="activities">
-  <div class="orb orb-teal" style="width:400px;height:400px;bottom:0;right:0;"></div>
-  <div class="container">
-    <div class="sec-label fade-in">ACTIVITIES</div>
-    <h2 class="sec-title fade-in">NULLの活動記録</h2>
-    <div class="act-grid">
-      <a href="https://www.tiktok.com/@project.null.01" target="_blank" class="glass act-card fade-in" id="act-tiktok">
-        <div class="act-icon">📱</div>
-        <div class="act-platform">TikTok</div>
-        <div class="act-title">@project.null.01</div>
-        <p class="act-desc">ARG（代替現実ゲーム）やホラー系ショート動画を展開中。現実とバーチャルの境界を侵食する。</p>
-        <div class="act-arrow">→</div>
-      </a>
-      <a href="https://www.tunecore.co.jp/artists?id=1070484" target="_blank" class="glass act-card fade-in" id="act-music" style="transition-delay:.1s">
-        <div class="act-icon">🎵</div>
-        <div class="act-platform">Music</div>
-        <div class="act-title">VOID_PROTOCOL — 配信中</div>
-        <p class="act-desc">TuneCoreにて楽曲を配信。NULLの音楽がバーチャルとリアルを繋ぐ。</p>
-        <div class="act-arrow">→</div>
-      </a>
-      <a href="https://project-null-01.github.io/OVERRIDE_SYNC/" target="_blank" class="glass act-card fade-in" id="act-game" style="transition-delay:.2s">
-        <div class="act-icon">🎮</div>
-        <div class="act-platform">Mini Game</div>
-        <div class="act-title">OVERRIDE_SYNC</div>
-        <p class="act-desc">サイト内で実際に遊べるブラウザゲーム。NULLの世界観に没入せよ。</p>
-        <div class="act-arrow">→</div>
-      </a>
-      <a href="https://lin.ee/xHa9eyq" target="_blank" class="glass act-card fade-in" id="act-line" style="transition-delay:.3s">
-        <div class="act-icon">💬</div>
-        <div class="act-platform">LINE公式</div>
-        <div class="act-title">友だち追加で最新情報</div>
-        <p class="act-desc">導入相談・最新情報・限定コンテンツはLINE公式アカウントで受信。</p>
-        <div class="act-arrow">→</div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- FOOTER -->
-<footer id="footer">
-  <div class="container">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <div class="footer-logo glitch-h">PROJECT NULL</div>
-        <p class="footer-tagline">バーチャル世界をハッキングする、AIコンシェルジュ。</p>
-        <div class="footer-sns">
-          <a href="https://lin.ee/xHa9eyq" target="_blank" title="LINE">
-            <img src="assets/line.jpg" alt="LINE" class="sns-img">
-          </a>
-          <a href="https://www.instagram.com/project.null.01" target="_blank" title="Instagram">
-            <img src="assets/instagram.jpg" alt="Instagram" class="sns-img">
-          </a>
-          <a href="https://www.tiktok.com/@project.null.01" target="_blank" title="TikTok">
-            <img src="assets/tiktok.jpg" alt="TikTok" class="sns-img">
-          </a>
-          <a href="https://www.threads.net/@project.null.01" target="_blank" title="Threads">
-            <img src="assets/threads.jpg" alt="Threads" class="sns-img">
-          </a>
-          <a href="https://www.tunecore.co.jp/artists?id=1070484" target="_blank" title="Music">
-            <img src="assets/music.jpg" alt="Music" class="sns-img">
-          </a>
+        <div class="opts-grid">
+          <div class="glass opt-card fade-in">
+            <div class="opt-badge opt-a">OPT A</div>
+            <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">NULL導入 <span
+                style="color:var(--accent);font-size:1.15rem;">+¥50,000</span></div>
+            <div class="opt-desc">24時間対応AIコンシェルジュの実装。LINEやWebサイトに設置。予約・FAQ・誘導を自動化。</div>
+          </div>
+          <div class="glass opt-card fade-in" style="transition-delay:.05s">
+            <div class="opt-badge opt-b">OPT B</div>
+            <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">AIアバター作成 <span
+                style="color:var(--purple);font-size:1.15rem;">+¥30,000〜</span></div>
+            <div class="opt-desc">オーナー独自のAIアバターを生成。あなたの顔・世界観を反映したバーチャルキャラクターを制作。</div>
+          </div>
+          <div class="glass opt-card fade-in" style="transition-delay:.10s">
+            <div class="opt-badge opt-c">OPT C</div>
+            <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">ミニゲーム作成 <span
+                style="color:var(--accent);font-size:1.15rem;">+¥50,000</span></div>
+            <div class="opt-desc">サイト内に配置する集客用インタラクティブゲーム。滞在時間UPとバイラル拡散を狙う最強の集客装置。</div>
+          </div>
+          <div class="glass opt-card fade-in" style="transition-delay:.15s">
+            <div class="opt-badge opt-d">OPT D</div>
+            <div class="opt-title" style="display:flex;justify-content:space-between;align-items:center;">その他カスタム <span
+                style="color:var(--text-dim);font-size:.9rem;font-weight:400;">要相談</span></div>
+            <div class="opt-desc">特殊機能・API連携・外部システム統合など、あらゆる要件に対応。まずはご相談ください。</div>
+          </div>
         </div>
       </div>
-      <div class="footer-links">
-        <div class="footer-col">
-          <div class="footer-col-title">LEGAL</div>
-          <a href="tokushoho.html" class="footer-link" id="f-tokushoho">特定商取引法に基づく表記</a>
-          <a href="privacy.html" class="footer-link" id="f-privacy">プライバシーポリシー</a>
-        </div>
-        <div class="footer-col">
-          <div class="footer-col-title">CONTACT</div>
-          <a href="https://lin.ee/xHa9eyq" target="_blank" class="footer-link" id="f-contact-line">LINEでお問い合わせ</a>
-          <a href="https://www.tiktok.com/@project.null.01" target="_blank" class="footer-link" id="f-contact-tiktok">TikTok DM</a>
-        </div>
+      <div class="price-cta fade-in">
+        <a href="https://lin.ee/xHa9eyq" target="_blank" class="btn btn-primary" id="pricing-cta-btn"
+          style="font-size:1.05rem;padding:18px 48px;">導入の相談をする（LINE）→</a>
+        <p style="color:var(--text-dim);font-size:.8rem;margin-top:12px;">※ 料金はヒアリング後にお見積りします。まずはお気軽にご相談ください。</p>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span id="copy-tap">© PROJECT NULL</span>
-      <span style="color:var(--text-dim);font-size:.8rem;">All rights reserved.</span>
+  </section>
+
+  <div class="divider"></div>
+
+
+  <!-- ACTIVITIES -->
+  <section id="activities">
+    <div class="orb orb-teal" style="width:400px;height:400px;bottom:0;right:0;"></div>
+    <div class="container">
+      <div class="sec-label fade-in">ACTIVITIES</div>
+      <h2 class="sec-title fade-in">NULLの活動記録</h2>
+      <div class="act-grid">
+        <a href="https://www.tiktok.com/@project.null.01" target="_blank" class="glass act-card fade-in"
+          id="act-tiktok">
+          <div class="act-icon">📱</div>
+          <div class="act-platform">TikTok</div>
+          <div class="act-title">@project.null.01</div>
+          <p class="act-desc">ARG（代替現実ゲーム）やホラー系ショート動画を展開中。現実とバーチャルの境界を侵食する。</p>
+          <div class="act-arrow">→</div>
+        </a>
+        <a href="https://www.tunecore.co.jp/artists?id=1070484" target="_blank" class="glass act-card fade-in"
+          id="act-music" style="transition-delay:.1s">
+          <div class="act-icon">🎵</div>
+          <div class="act-platform">Music</div>
+          <div class="act-title">VOID_PROTOCOL — 配信中</div>
+          <p class="act-desc">TuneCoreにて楽曲を配信。NULLの音楽がバーチャルとリアルを繋ぐ。</p>
+          <div class="act-arrow">→</div>
+        </a>
+        <a href="https://project-null-01.github.io/OVERRIDE_SYNC/" target="_blank" class="glass act-card fade-in"
+          id="act-game" style="transition-delay:.2s">
+          <div class="act-icon">🎮</div>
+          <div class="act-platform">Mini Game</div>
+          <div class="act-title">OVERRIDE_SYNC</div>
+          <p class="act-desc">サイト内で実際に遊べるブラウザゲーム。NULLの世界観に没入せよ。</p>
+          <div class="act-arrow">→</div>
+        </a>
+        <a href="https://lin.ee/xHa9eyq" target="_blank" class="glass act-card fade-in" id="act-line"
+          style="transition-delay:.3s">
+          <div class="act-icon">💬</div>
+          <div class="act-platform">LINE公式</div>
+          <div class="act-title">友だち追加で最新情報</div>
+          <p class="act-desc">導入相談・最新情報・限定コンテンツはLINE公式アカウントで受信。</p>
+          <div class="act-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo glitch-h">PROJECT NULL</div>
+          <p class="footer-tagline">バーチャル世界をハッキングする、AIコンシェルジュ。</p>
+          <div class="footer-sns">
+            <a href="https://lin.ee/xHa9eyq" target="_blank" title="LINE">
+              <img src="assets/line.jpg" alt="LINE" class="sns-img">
+            </a>
+            <a href="https://www.instagram.com/project.null.01" target="_blank" title="Instagram">
+              <img src="assets/instagram.jpg" alt="Instagram" class="sns-img">
+            </a>
+            <a href="https://www.tiktok.com/@project.null.01" target="_blank" title="TikTok">
+              <img src="assets/tiktok.jpg" alt="TikTok" class="sns-img">
+            </a>
+            <a href="https://www.threads.net/@project.null.01" target="_blank" title="Threads">
+              <img src="assets/threads.jpg" alt="Threads" class="sns-img">
+            </a>
+            <a href="https://www.tunecore.co.jp/artists?id=1070484" target="_blank" title="Music">
+              <img src="assets/music.jpg" alt="Music" class="sns-img">
+            </a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <div class="footer-col-title">LEGAL</div>
+            <a href="tokushoho.html" class="footer-link" id="f-tokushoho">特定商取引法に基づく表記</a>
+            <a href="privacy.html" class="footer-link" id="f-privacy">プライバシーポリシー</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-title">CONTACT</div>
+            <a href="https://lin.ee/xHa9eyq" target="_blank" class="footer-link" id="f-contact-line">LINEでお問い合わせ</a>
+            <a href="https://www.tiktok.com/@project.null.01" target="_blank" class="footer-link"
+              id="f-contact-tiktok">TikTok DM</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span id="copy-tap">© PROJECT NULL</span>
+        <span style="color:var(--text-dim);font-size:.8rem;">All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 隠し特商法ページ -->
+  <div id="hidden-legal" style="display:none;position:fixed;inset:0;z-index:99990;background:#000;overflow-y:auto;">
+    <div style="max-width:700px;margin:0 auto;padding:60px 24px;font-family:monospace;">
+      <div style="font-size:.8rem;color:#ff003c;letter-spacing:.2em;margin-bottom:8px;">// CLASSIFIED — UNAUTHORIZED
+        ACCESS DETECTED</div>
+      <h1 style="font-size:1.8rem;color:#00FFCC;margin-bottom:32px;text-shadow:0 0 20px #00FFCC;">特定商取引法に基づく表記<br><span
+          style="font-size:.9rem;color:#888;">— FULL DISCLOSURE —</span></h1>
+      <table style="width:100%;border-collapse:collapse;font-size:.88rem;">
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;width:40%;">販売業者</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#00FFCC;">PROJECT NULL（個人事業）</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">運営責任者</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">衛藤 蓮</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">所在地</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">福岡県中間市中尾1-7-40</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">電話番号</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">090-2719-8834</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">メールアドレス</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">project.null1225@gmail.com</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">販売価格</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">50,000円〜</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">支払方法</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">クレジットカード（Stripe）/ 銀行振込</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">返品・キャンセル</td>
+          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">役務の性質上、制作開始後のキャンセルは不可。詳細は契約書に準じる。
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:12px 8px;color:#888;">引渡し時期</td>
+          <td style="padding:12px 8px;color:#f0f0f0;">契約締結後、合意したスケジュールに従い納品。</td>
+        </tr>
+      </table>
+      <div
+        style="margin-top:40px;padding:20px;border:1px solid #ff003c;border-radius:8px;font-size:.78rem;color:#ff003c;">
+        ⚠ このページはシステム内部へのアクセスにより表示されています。<br>一般公開対象外のフルディスクロージャー情報です。
+      </div>
+      <button onclick="document.getElementById('hidden-legal').style.display='none'"
+        style="margin-top:32px;padding:12px 32px;background:transparent;border:1px solid #00FFCC;color:#00FFCC;font-family:monospace;cursor:pointer;font-size:.9rem;">×
+        CLOSE_SESSION</button>
     </div>
   </div>
-</footer>
 
-<!-- 隠し特商法ページ -->
-<div id="hidden-legal" style="display:none;position:fixed;inset:0;z-index:99990;background:#000;overflow-y:auto;">
-  <div style="max-width:700px;margin:0 auto;padding:60px 24px;font-family:monospace;">
-    <div style="font-size:.8rem;color:#ff003c;letter-spacing:.2em;margin-bottom:8px;">// CLASSIFIED — UNAUTHORIZED ACCESS DETECTED</div>
-    <h1 style="font-size:1.8rem;color:#00FFCC;margin-bottom:32px;text-shadow:0 0 20px #00FFCC;">特定商取引法に基づく表記<br><span style="font-size:.9rem;color:#888;">— FULL DISCLOSURE —</span></h1>
-    <table style="width:100%;border-collapse:collapse;font-size:.88rem;">
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;width:40%;">販売業者</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#00FFCC;">PROJECT NULL（個人事業）</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">運営責任者</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">衛藤 蓮</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">所在地</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">福岡県中間市中尾1-7-40</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">電話番号</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">090-2719-8834</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">メールアドレス</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">project.null1225@gmail.com</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">販売価格</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">50,000円〜</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">支払方法</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">クレジットカード（Stripe）/ 銀行振込</td></tr>
-      <tr><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">返品・キャンセル</td><td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">役務の性質上、制作開始後のキャンセルは不可。詳細は契約書に準じる。</td></tr>
-      <tr><td style="padding:12px 8px;color:#888;">引渡し時期</td><td style="padding:12px 8px;color:#f0f0f0;">契約締結後、合意したスケジュールに従い納品。</td></tr>
-    </table>
-    <div style="margin-top:40px;padding:20px;border:1px solid #ff003c;border-radius:8px;font-size:.78rem;color:#ff003c;">
-      ⚠ このページはシステム内部へのアクセスにより表示されています。<br>一般公開対象外のフルディスクロージャー情報です。
-    </div>
-    <button onclick="document.getElementById('hidden-legal').style.display='none'" style="margin-top:32px;padding:12px 32px;background:transparent;border:1px solid #00FFCC;color:#00FFCC;font-family:monospace;cursor:pointer;font-size:.9rem;">× CLOSE_SESSION</button>
-  </div>
-</div>
+  <script>
+    // ── Cursor ──
+    (function () {
+      var c = document.getElementById('cur'), r = document.getElementById('cur-ring');
+      var mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+      document.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; c.style.transform = 'translate(' + (mx - 3) + 'px,' + (my - 3) + 'px)'; });
+      (function anim() { rx += (mx - rx) * .18; ry += (my - ry) * .18; r.style.transform = 'translate(' + rx + 'px,' + ry + 'px) translate(-50%,-50%)'; requestAnimationFrame(anim); })();
+      document.querySelectorAll('a,button,.btn,.uc-card,.ben-card,.act-card,.opt-card,.gal-img').forEach(function (el) {
+        el.addEventListener('mouseenter', function () { document.body.classList.add('hov'); });
+        el.addEventListener('mouseleave', function () { document.body.classList.remove('hov'); });
+      });
+    })();
 
-<script>
-// ── Cursor ──
-(function(){
-  var c=document.getElementById('cur'),r=document.getElementById('cur-ring');
-  var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;c.style.transform='translate('+(mx-3)+'px,'+(my-3)+'px)';});
-  (function anim(){rx+=(mx-rx)*.18;ry+=(my-ry)*.18;r.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';requestAnimationFrame(anim);})();
-  document.querySelectorAll('a,button,.btn,.uc-card,.ben-card,.act-card,.opt-card,.gal-img').forEach(function(el){
-    el.addEventListener('mouseenter',function(){document.body.classList.add('hov');});
-    el.addEventListener('mouseleave',function(){document.body.classList.remove('hov');});
-  });
-})();
-
-// ── Particles ──
-(function(){
-  var cv=document.getElementById('pcv'),ctx=cv.getContext('2d'),pts=[],W,H;
-  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
-  resize(); window.addEventListener('resize',resize);
-  for(var i=0;i<50;i++) pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:1+Math.random()*1.2,a:.08+Math.random()*.15});
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    pts.forEach(function(p){
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(0,255,204,'+p.a+')'; ctx.fill();
-    });
-    pts.forEach(function(p,i){
-      for(var j=i+1;j<pts.length;j++){
-        var d=Math.hypot(p.x-pts[j].x,p.y-pts[j].y);
-        if(d<110){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(0,255,204,'+(0.05*(1-d/110))+')';ctx.stroke();}
+    // ── Particles ──
+    (function () {
+      var cv = document.getElementById('pcv'), ctx = cv.getContext('2d'), pts = [], W, H;
+      function resize() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+      resize(); window.addEventListener('resize', resize);
+      for (var i = 0; i < 50; i++) pts.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1 + Math.random() * 1.2, a: .08 + Math.random() * .15 });
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        pts.forEach(function (p) {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0; if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0,255,204,' + p.a + ')'; ctx.fill();
+        });
+        pts.forEach(function (p, i) {
+          for (var j = i + 1; j < pts.length; j++) {
+            var d = Math.hypot(p.x - pts[j].x, p.y - pts[j].y);
+            if (d < 110) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pts[j].x, pts[j].y); ctx.strokeStyle = 'rgba(0,255,204,' + (0.05 * (1 - d / 110)) + ')'; ctx.stroke(); }
+          }
+        });
+        requestAnimationFrame(draw);
       }
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
+      draw();
+    })();
 
-// ── Bootloader ──
-(function(){
-  var fill=document.getElementById('bfill'),log=document.getElementById('blog'),boot=document.getElementById('boot');
-  var lines=['SYS.ROOT.INIT() ... [OK]','AI_MODELS LOADED ... [OK]','BYPASSING PROTOCOLS ... [OK]','NULL.SYSTEM ONLINE ... [OK]','INITIALIZING B2B_MODULE ... [OK]','ALL SYSTEMS NOMINAL. █'];
-  var prog=0,li=0;
-  var iv=setInterval(function(){
-    prog+=Math.random()*18+6; if(prog>100)prog=100;
-    fill.style.width=prog+'%';
-    if(li<lines.length && prog>=(li+1)*100/lines.length){
-      var d=document.createElement('div'); d.textContent=lines[li++]; log.appendChild(d); log.scrollTop=log.scrollHeight;
+    // ── Bootloader ──
+    (function () {
+      var fill = document.getElementById('bfill'), log = document.getElementById('blog'), boot = document.getElementById('boot');
+      var lines = ['SYS.ROOT.INIT() ... [OK]', 'AI_MODELS LOADED ... [OK]', 'BYPASSING PROTOCOLS ... [OK]', 'NULL.SYSTEM ONLINE ... [OK]', 'INITIALIZING B2B_MODULE ... [OK]', 'ALL SYSTEMS NOMINAL. █'];
+      var prog = 0, li = 0;
+      var iv = setInterval(function () {
+        prog += Math.random() * 18 + 6; if (prog > 100) prog = 100;
+        fill.style.width = prog + '%';
+        if (li < lines.length && prog >= (li + 1) * 100 / lines.length) {
+          var d = document.createElement('div'); d.textContent = lines[li++]; log.appendChild(d); log.scrollTop = log.scrollHeight;
+        }
+        if (prog >= 100) { clearInterval(iv); setTimeout(function () { boot.classList.add('done'); }, 500); }
+      }, 120);
+    })();
+
+    // ── YouTube ──
+    function loadYT() {
+      var box = document.getElementById('yt-box'), boot = document.getElementById('yt-boot');
+      boot.style.display = 'none';
+      var ifr = document.createElement('iframe');
+      ifr.src = 'https://www.youtube.com/embed/oCXRNPTJW_A?autoplay=1&rel=0&modestbranding=1';
+      ifr.allow = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
+      ifr.allowFullscreen = true;
+      box.appendChild(ifr);
     }
-    if(prog>=100){clearInterval(iv); setTimeout(function(){boot.classList.add('done');},500);}
-  },120);
-})();
 
-// ── YouTube ──
-function loadYT(){
-  var box=document.getElementById('yt-box'),boot=document.getElementById('yt-boot');
-  boot.style.display='none';
-  var ifr=document.createElement('iframe');
-  ifr.src='https://www.youtube.com/embed/oCXRNPTJW_A?autoplay=1&rel=0&modestbranding=1';
-  ifr.allow='accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
-  ifr.allowFullscreen=true;
-  box.appendChild(ifr);
-}
+    // ── Scroll Fade ──
+    (function () {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: .12 });
+      document.querySelectorAll('.fade-in').forEach(function (el) { obs.observe(el); });
+    })();
 
-// ── Scroll Fade ──
-(function(){
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});
-  },{threshold:.12});
-  document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el);});
-})();
-
-// ── Hero Background Slider ──
-(function(){
-  var slides = document.querySelectorAll('#bg-slider .bg-slide');
-  if(!slides.length) return;
-  var cur = 0;
-  setInterval(function(){
-    slides[cur].classList.remove('active');
-    cur = (cur + 1) % slides.length;
-    slides[cur].classList.add('active');
-  }, 4000);
-})();
+    // ── Hero Background Slider ──
+    (function () {
+      var slides = document.querySelectorAll('#bg-slider .bg-slide');
+      if (!slides.length) return;
+      var cur = 0;
+      setInterval(function () {
+        slides[cur].classList.remove('active');
+        cur = (cur + 1) % slides.length;
+        slides[cur].classList.add('active');
+      }, 4000);
+    })();
 
 
 
-// ── Hidden Legal (10x tap) ──
-(function(){
-  var el=document.getElementById('copy-tap'),count=0,timer;
-  function reset(){count=0;}
-  el.addEventListener('click',function(){
-    count++;
-    clearTimeout(timer);
-    timer=setTimeout(reset,1500);
-    if(count>=10){
-      count=0;
-      var hl=document.getElementById('hidden-legal');
-      hl.style.display='block';
-      hl.scrollTop=0;
-    }
-  });
-})();
-</script>
+    // ── Hidden Legal (10x tap) ──
+    (function () {
+      var el = document.getElementById('copy-tap'), count = 0, timer;
+      function reset() { count = 0; }
+      el.addEventListener('click', function () {
+        count++;
+        clearTimeout(timer);
+        timer = setTimeout(reset, 1500);
+        if (count >= 10) {
+          count = 0;
+          var hl = document.getElementById('hidden-legal');
+          hl.style.display = 'block';
+          hl.scrollTop = 0;
+        }
+      });
+    })();
+  </script>
 </body>
-</html>
 
+</html>
