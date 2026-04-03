@@ -1152,12 +1152,6 @@
       font-size: .85rem;
       color: var(--text-dim);
       letter-spacing: .1em;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    #copy-tap:hover {
-      color: var(--accent);
     }
 
     /* ─── Mobile Layout Fixes (Emergency Patch) ─── */
@@ -1582,61 +1576,6 @@
   </footer>
   </div>
 
-  <!-- 隠し特商法ページ -->
-  <div id="hidden-legal" style="display:none;position:fixed;inset:0;z-index:99990;background:#000;overflow-y:auto;">
-    <div style="max-width:700px;margin:0 auto;padding:60px 24px;font-family:monospace;">
-      <div style="font-size:.8rem;color:#ff003c;letter-spacing:.2em;margin-bottom:8px;">// CLASSIFIED — UNAUTHORIZED
-        ACCESS DETECTED</div>
-      <h1 style="font-size:1.8rem;color:#00FFCC;margin-bottom:32px;text-shadow:0 0 20px #00FFCC;">特定商取引法に基づく表記<br><span
-          style="font-size:.9rem;color:#888;">— FULL DISCLOSURE —</span></h1>
-      <table style="width:100%;border-collapse:collapse;font-size:.88rem;">
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;width:40%;">販売業者</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#00FFCC;">PROJECT NULL（個人事業）</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">運営責任者</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">衛藤 蓮</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">所在地</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">福岡県中間市中尾1-7-40</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">電話番号</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">090-2719-8834</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">メールアドレス</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">project.null1225@gmail.com</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">販売価格</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">50,000円〜</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">支払方法</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">クレジットカード（Stripe）/ 銀行振込</td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#888;">返品・キャンセル</td>
-          <td style="padding:12px 8px;border-bottom:1px solid #1a1a1a;color:#f0f0f0;">役務の性質上、制作開始後のキャンセルは不可。詳細は契約書に準じる。
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:12px 8px;color:#888;">引渡し時期</td>
-          <td style="padding:12px 8px;color:#f0f0f0;">契約締結後、合意したスケジュールに従い納品。</td>
-        </tr>
-      </table>
-      <div
-        style="margin-top:40px;padding:20px;border:1px solid #ff003c;border-radius:8px;font-size:.78rem;color:#ff003c;">
-        ⚠ このページはシステム内部へのアクセスにより表示されています。<br>一般公開対象外のフルディスクロージャー情報です。
-      </div>
-      <button onclick="document.getElementById('hidden-legal').style.display='none'"
-        style="margin-top:32px;padding:12px 32px;background:transparent;border:1px solid #00FFCC;color:#00FFCC;font-family:monospace;cursor:pointer;font-size:.9rem;">×
-        CLOSE_SESSION</button>
-    </div>
-  </div>
 
   <script>
     // ── Zoom Prevention (Pinch & Double Tap) ──
@@ -1748,23 +1687,6 @@
     })();
 
 
-
-    // ── Hidden Legal (10x tap) ──
-    (function () {
-      var el = document.getElementById('copy-tap'), count = 0, timer;
-      function reset() { count = 0; }
-      el.addEventListener('click', function () {
-        count++;
-        clearTimeout(timer);
-        timer = setTimeout(reset, 1500);
-        if (count >= 10) {
-          count = 0;
-          var hl = document.getElementById('hidden-legal');
-          hl.style.display = 'block';
-          hl.scrollTop = 0;
-        }
-      });
-    })();
   </script>
 </body>
 
